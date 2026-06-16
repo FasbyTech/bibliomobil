@@ -2,27 +2,32 @@ package com.fasby.bibliomobil.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Cyberpunk Palette
-val CyberBlack = Color(0xFF0D0208)
-val CyberDark = Color(0xFF000505) // Near black with slight teal tint
-val CyberGray = Color(0xFF1B1B1B)
+// Professional "Deep Ink" Palette
+// Dark Theme Colors
+val InkPrimary = Color(0xFF90CAF9)       // Light Blue 200
+val InkOnPrimary = Color(0xFF0D47A1)     // Deep Blue 900
+val InkPrimaryContainer = Color(0xFF1976D2)
+val InkOnPrimaryContainer = Color(0xFFE3F2FD)
 
-val NeonPink = Color(0xFFFF003F) // Cyber Red/Pink
-val NeonCyan = Color(0xFF00FF9F) // Matrix Green/Cyan
-val NeonBlue = Color(0xFF00E5FF)
-val NeonYellow = Color(0xFFFDEE00)
-val CyberPurple = Color(0xFF711C91)
+val InkSecondary = Color(0xFFB0BEC5)     // Blue Grey 200
+val InkOnSecondary = Color(0xFF263238)   // Blue Grey 900
+val InkSecondaryContainer = Color(0xFF455A64)
+val InkOnSecondaryContainer = Color(0xFFECEFF1)
 
-val OnCyberBackground = Color(0xFFE0E0E0)
-val OnCyberSurface = Color(0xFFFFFFFF)
-val CyberError = Color(0xFFFF3131)
+val InkTertiary = Color(0xFFFFB74D)      // Orange 300 (Accent)
+val InkOnTertiary = Color(0xFFE65100)    // Deep Orange 900
 
-// Legacy Material 3 default names for compatibility if needed, 
-// but we will mainly use the new palette.
-val Purple80 = NeonBlue
-val PurpleGrey80 = CyberPurple
-val Pink80 = NeonPink
+val InkBackground = Color(0xFF0F172A)    // Deep Navy
+val InkSurface = Color(0xFF1E293B)       // Slate Navy
+val InkOnBackground = Color(0xFFF8FAFC)
+val InkOnSurface = Color(0xFFF8FAFC)
 
-val Purple40 = CyberPurple
-val PurpleGrey40 = CyberGray
-val Pink40 = NeonPink
+// Light Theme Colors (Optional, but good for completeness)
+val InkPrimaryLight = Color(0xFF0284C7)
+val InkOnPrimaryLight = Color(0xFFFFFFFF)
+val InkPrimaryContainerLight = Color(0xFFE0F2FE)
+
+val InkSecondaryLight = Color(0xFF64748B)
+val InkBackgroundLight = Color(0xFFF8FAFC)
+val InkSurfaceLight = Color(0xFFFFFFFF)
+val InkOnSurfaceLight = Color(0xFF0F172A)
