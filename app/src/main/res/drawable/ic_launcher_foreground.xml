@@ -1,0 +1,41 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportHeight="108"
+    android:viewportWidth="108">
+
+    <!-- Outer Glow / Cyber Border -->
+    <path
+        android:pathData="M30,30 L78,30 L78,78 L30,78 Z"
+        android:strokeColor="#3300E5FF"
+        android:strokeWidth="8"
+        android:strokeLineCap="round"/>
+
+    <!-- Book Left Side -->
+    <path
+        android:pathData="M54,35 L35,40 L35,75 L54,70 Z"
+        android:fillColor="#00E5FF"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1"/>
+
+    <!-- Book Right Side -->
+    <path
+        android:pathData="M54,35 L73,40 L73,75 L54,70 Z"
+        android:fillColor="#FF003F"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1"/>
+
+    <!-- Digital Spine / Center line -->
+    <path
+        android:pathData="M54,30 L54,80"
+        android:strokeColor="#00FF9F"
+        android:strokeWidth="2"
+        android:strokeLineCap="square"/>
+
+    <!-- Tech details (Glitch lines) -->
+    <path
+        android:pathData="M25,45 L40,45 M68,60 L83,60 M30,65 L45,65"
+        android:strokeColor="#FDEE00"
+        android:strokeWidth="1.5"/>
+
+</vector>
