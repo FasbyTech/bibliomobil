@@ -12,6 +12,7 @@ Este directorio contiene el conjunto completo de documentos técnicos y funciona
 6.  **[06_Manual_Instalacion.md](./06_Manual_Instalacion.md)**: Guía de despliegue para desarrolladores.
 7.  **[07_Manual_Usuario.md](./07_Manual_Usuario.md)**: Guía ilustrada para el usuario final.
 8.  **[08_Codigo_Fuente.md](./08_Codigo_Fuente.md)**: Anexo con la lógica de negocio y componentes críticos.
+9.  **[09_Politica_Privacidad.md](./09_Politica_Privacidad.md)**: Transparencia sobre el uso de datos y permisos.
 
 ---
 
