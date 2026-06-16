@@ -14,6 +14,5 @@ El desarrollo de **BiblioMobil** ha demostrado que las tecnologías de vanguardi
 ## 3. Trabajo Futuro (Roadmap)
 Para escalar el proyecto tras el TFM, se proponen las siguientes líneas:
 - **Red Social de Lectores**: Permitir a los usuarios compartir sus colecciones o recomendar libros a amigos mediante una capa de Firebase.
-- **Exportación de Datos**: Implementar la generación de informes en CSV o PDF de la biblioteca personal.
 - **Gamificación**: Añadir retos de lectura mensuales y medallas según el número de libros escaneados y leídos.
-- **Sincronización Cloud**: Guardado de la biblioteca en la nube para sincronización entre múltiples dispositivos.
+- **Sincronización Cloud Automática**: Implementar una sincronización en tiempo real entre múltiples dispositivos sin necesidad de backups manuales.
