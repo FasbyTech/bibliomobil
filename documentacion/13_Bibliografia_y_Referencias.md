@@ -16,4 +16,4 @@
 - **Material Design 3**: [Directrices de diseño visual y de interacción](https://m3.material.io/).
 
 ## 4. Marco Académico
-- **Materiales del Máster**: Contenidos teóricos y prácticos del Máster en Desarrollo de Aplicaciones Móviles (o equivalente), que han servido como base metodológica para el diseño, implementación y documentación de este proyecto.
+- **Big School**: Contenidos teóricos y prácticos del **Máster en Desarrollo con IA**, que han servido como base metodológica para el diseño, implementación y documentación de este proyecto, integrando tecnologías de vanguardia y buenas prácticas en el ecosistema móvil.
