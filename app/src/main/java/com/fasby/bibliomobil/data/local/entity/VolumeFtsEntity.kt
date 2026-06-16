@@ -1,13 +1,11 @@
 package com.fasby.bibliomobil.data.local.entity
 
 import androidx.room.Entity
-// import androidx.room.Fts5
-import androidx.room.PrimaryKey
+import androidx.room.Fts4
 
-// @Fts5(contentEntity = VolumeEntity::class)
+@Fts4(contentEntity = VolumeEntity::class)
 @Entity(tableName = "volumes_fts")
 data class VolumeFtsEntity(
-    @PrimaryKey(autoGenerate = true) val rowid: Int,
     val title: String,
     val synopsis: String
 )

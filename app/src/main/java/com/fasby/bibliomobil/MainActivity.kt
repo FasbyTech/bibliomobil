@@ -17,6 +17,10 @@ import com.fasby.bibliomobil.ui.SplashScreen
 import com.fasby.bibliomobil.ui.theme.BiblioMobilTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Punto de entrada principal de la aplicación.
+ * Maneja la lógica de permisos iniciales y la visualización de la Splash Screen.
+ */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 

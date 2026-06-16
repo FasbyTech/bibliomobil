@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fasby.bibliomobil.catalog.presentation.CatalogViewModel
 import com.fasby.bibliomobil.domain.voice.VoiceRecognizerState
 import com.fasby.bibliomobil.presentation.catalog.VolumeCard
@@ -29,7 +30,7 @@ fun CatalogScreen(
     onVolumeClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     // Animación de color adaptativa para el botón de dictado (Rojo si escucha)

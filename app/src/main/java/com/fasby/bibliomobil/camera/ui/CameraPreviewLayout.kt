@@ -8,6 +8,7 @@ import androidx.camera.view.PreviewView
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,6 +28,13 @@ fun CameraPreviewLayout(
     
     // Ejecutor dedicado en un hilo secundario para el análisis de frames
     val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
+
+    // Liberamos el ejecutor cuando el Composable sale de la composición
+    DisposableEffect(Unit) {
+        onDispose {
+            analysisExecutor.shutdown()
+        }
+    }
 
     // El puente de conexión entre las vistas clásicas de Android y Jetpack Compose
     AndroidView(

@@ -110,6 +110,10 @@ class AddVolumeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Inicia la recuperación automática de datos desde Google Books.
+     * Realiza una búsqueda por ISBN y, si falla, una búsqueda general.
+     */
     fun autocomplete() {
         val rawIsbn = _uiState.value.isbn
         val isbn = rawIsbn.uppercase().replace(Regex("[^0-9X]"), "")
@@ -131,7 +135,7 @@ class AddVolumeViewModel @Inject constructor(
                     )
                 }
             } else {
-                // Si falla por ISBN, intentamos una búsqueda general por el código (a veces Google no lo tiene marcado como ISBN)
+                // Fallback: Si falla por ISBN, intentamos una búsqueda general por el código
                 val generalResult = repository.searchRemoteBook(isbn)
                 if (generalResult != null) {
                     val (volume, authors) = generalResult
@@ -152,6 +156,9 @@ class AddVolumeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Persiste el volumen y sus autores en la base de datos local.
+     */
     fun saveVolume() {
         viewModelScope.launch {
             val state = _uiState.value

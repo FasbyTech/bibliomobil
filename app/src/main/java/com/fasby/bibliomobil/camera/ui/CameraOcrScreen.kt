@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fasby.bibliomobil.camera.OcrImageAnalyzer
 import com.fasby.bibliomobil.camera.presentation.CameraOcrViewModel
 import com.fasby.bibliomobil.presentation.catalog.VolumeCard
@@ -23,7 +24,7 @@ fun CameraOcrScreen(
     modifier: Modifier = Modifier
 ) {
     // Escuchamos el estado del ViewModel de forma reactiva a los flujos de la cámara
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     // 1. Efecto Secundario: Si el OCR detecta un patrón de ISBN, disparamos la navegación
     LaunchedEffect(uiState.detectedIsbn) {

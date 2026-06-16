@@ -12,8 +12,8 @@ import com.fasby.bibliomobil.data.local.entity.*
         VolumeEntity::class,
         CollectionEntity::class,
         AuthorEntity::class,
-        VolumeAuthorCrossRef::class
-        // VolumeFtsEntity::class // Temporarily disabled to unblock KSP build
+        VolumeAuthorCrossRef::class,
+        VolumeFtsEntity::class
     ],
     version = 1,
     exportSchema = false

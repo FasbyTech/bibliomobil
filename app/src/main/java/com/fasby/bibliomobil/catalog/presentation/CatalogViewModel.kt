@@ -32,6 +32,8 @@ class CatalogViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     private val _collectionId = MutableStateFlow<String?>(null)
 
+    // Unificamos múltiples fuentes de estado en un único flujo para la UI.
+    // flatMapLatest asegura que si cambia la búsqueda, se cancele la consulta anterior.
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<CatalogUiState> = combine(
         _searchQuery,

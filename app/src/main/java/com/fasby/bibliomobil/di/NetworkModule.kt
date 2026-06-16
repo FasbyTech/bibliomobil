@@ -18,18 +18,25 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
-        val logging = HttpLoggingInterceptor()
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+        val logging = HttpLoggingInterceptor().apply {
+            level = if (com.fasby.bibliomobil.BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
+        }
         
         return OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val originalRequest = chain.request()
                 val apiKey = com.fasby.bibliomobil.BuildConfig.GOOGLE_BOOKS_API_KEY
 
+                // Inyección dinámica de la API Key en todas las peticiones
                 val urlWithKey = originalRequest.url.newBuilder()
                     .setQueryParameter("key", apiKey)
                     .build()
                 
+                // Configuración de cabeceras de seguridad para restringir el uso de la Key
                 val request = originalRequest.newBuilder()
                     .url(urlWithKey)
                     .header("X-Android-Package", "com.fasby.bibliomobil")

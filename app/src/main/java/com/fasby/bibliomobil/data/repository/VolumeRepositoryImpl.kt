@@ -43,9 +43,13 @@ class VolumeRepositoryImpl @Inject constructor(
     }
 
     override fun searchVolumes(query: String): Flow<List<DetailedVolume>> {
-        // Simplificamos la búsqueda para que funcione con LIKE estándar
-        val formattedQuery = query.trim()
-        return volumeDao.searchVolumesFts(formattedQuery)
+        val trimmedQuery = query.trim()
+        // Si el query está vacío, devolvemos todo
+        return if (trimmedQuery.isEmpty()) {
+            volumeDao.getAllDetailedVolumes()
+        } else {
+            volumeDao.searchVolumesFts(trimmedQuery)
+        }
     }
 
     override suspend fun saveCompleteVolume(
@@ -137,11 +141,18 @@ class VolumeRepositoryImpl @Inject constructor(
         database.clearAllTables()
     }
 
+    /**
+     * Implementación de la creación de backup físico del archivo SQLite.
+     * Utiliza un checkpoint de WAL para garantizar la integridad de los datos.
+     */
     override suspend fun createBackup(onUriReady: (Uri) -> Unit): Unit = withContext(ioDispatcher) {
         try {
-            database.close() // Cerramos para asegurar que todo esté en el .db
+            // Forzamos un checkpoint para que todo el contenido de WAL pase al .db principal
+            database.openHelper.writableDatabase.query("PRAGMA wal_checkpoint(FULL)").moveToFirst()
+
             val dbFile = context.getDatabasePath("biblio_mobil_db")
             if (dbFile.exists()) {
+                // Copiamos el archivo de la base de datos a la caché para poder compartirlo
                 val backupFile = File(context.cacheDir, "backup_bibliomobil_${System.currentTimeMillis()}.db")
                 dbFile.copyTo(backupFile, overwrite = true)
                 onUriReady(Uri.fromFile(backupFile))
@@ -151,6 +162,10 @@ class VolumeRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * Restaura la base de datos reemplazando el archivo actual por uno externo.
+     * Requiere el reinicio de la aplicación tras la operación.
+     */
     override suspend fun restoreBackup(uri: Uri): Boolean = withContext(ioDispatcher) {
         try {
             database.close()
