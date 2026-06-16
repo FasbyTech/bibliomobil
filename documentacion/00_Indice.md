@@ -14,6 +14,9 @@ Este directorio contiene el conjunto completo de documentos técnicos y funciona
 8.  **[08_Codigo_Fuente.md](./08_Codigo_Fuente.md)**: Anexo con la lógica de negocio y componentes críticos.
 9.  **[09_Politica_Privacidad.md](./09_Politica_Privacidad.md)**: Transparencia sobre el uso de datos y permisos.
 10. **[10_Ficha_Tecnica.md](./10_Ficha_Tecnica.md)**: Resumen técnico del hardware, software y dependencias.
+11. **[11_Plan_de_Pruebas.md](./11_Plan_de_Pruebas.md)**: Estrategia de validación y escenarios críticos.
+12. **[12_Conclusiones_y_Trabajo_Futuro.md](./12_Conclusiones_y_Trabajo_Futuro.md)**: Cierre académico y roadmap de escalabilidad.
+13. **[13_Bibliografia_y_Referencias.md](./13_Bibliografia_y_Referencias.md)**: Fuentes consultadas y bibliografía técnica.
 
 ---
 
