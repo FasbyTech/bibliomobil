@@ -9,15 +9,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.fasby.bibliomobil.catalog.presentation.CatalogViewModel
 import com.fasby.bibliomobil.domain.voice.VoiceRecognizerState
 import com.fasby.bibliomobil.presentation.catalog.VolumeCard
+import android.content.Intent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,8 +29,8 @@ fun CatalogScreen(
     onVolumeClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Recolectamos el estado unificado del ciclo de vida del catálogo
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     // Animación de color adaptativa para el botón de dictado (Rojo si escucha)
     val micButtonColor by animateColorAsState(
@@ -43,7 +46,21 @@ fun CatalogScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("Mi Biblioteca Inteligente") }
+                title = { Text("Mi Biblioteca Inteligente") },
+                actions = {
+                    IconButton(onClick = {
+                        viewModel.exportToCsv { csvData ->
+                            val intent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/csv"
+                                putExtra(Intent.EXTRA_SUBJECT, "Exportación Biblioteca BiblioMobil")
+                                putExtra(Intent.EXTRA_TEXT, csvData)
+                            }
+                            context.startActivity(Intent.createChooser(intent, "Compartir CSV"))
+                        }
+                    }) {
+                        Icon(Icons.Default.Share, contentDescription = "Exportar CSV")
+                    }
+                }
             )
         },
         floatingActionButton = {

@@ -115,4 +115,15 @@ class VolumeRepositoryImpl @Inject constructor(
             null
         }
     }
+
+    override suspend fun generateCsvReport(): String = withContext(ioDispatcher) {
+        val volumes = volumeDao.getAllDetailedVolumesStatic()
+        val header = "ISBN,Titulo,Autores,Año,Leido\n"
+        val rows = volumes.joinToString("\n") { detailed ->
+            val volume = detailed.volume
+            val authors = detailed.authors.joinToString(";") { it.name }
+            "${volume.isbn},\"${volume.title}\",\"$authors\",${volume.publishedYear},${if (volume.isRead) "SI" else "NO"}"
+        }
+        header + rows
+    }
 }

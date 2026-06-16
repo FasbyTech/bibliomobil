@@ -64,6 +64,10 @@ interface VolumeDao {
     @Query("SELECT * FROM volumes ORDER BY createdAt DESC")
     fun getAllDetailedVolumes(): Flow<List<DetailedVolume>>
 
+    @Transaction
+    @Query("SELECT * FROM volumes ORDER BY createdAt DESC")
+    suspend fun getAllDetailedVolumesStatic(): List<DetailedVolume>
+
     /**
      * Obtiene un volumen específico por su clave primaria (ISBN).
      */

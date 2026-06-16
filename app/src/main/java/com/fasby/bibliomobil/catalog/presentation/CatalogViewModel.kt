@@ -87,6 +87,13 @@ class CatalogViewModel @Inject constructor(
         _collectionId.value = collectionId
     }
 
+    fun exportToCsv(onResult: (String) -> Unit) {
+        viewModelScope.launch {
+            val csv = repository.generateCsvReport()
+            onResult(csv)
+        }
+    }
+
     // ========================================================================
     // Gestión del ciclo de vida del reconocimiento de voz
     // ========================================================================

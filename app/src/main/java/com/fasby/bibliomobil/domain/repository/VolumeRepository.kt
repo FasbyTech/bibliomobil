@@ -33,4 +33,7 @@ interface VolumeRepository {
 
     // Sincronización remota
     suspend fun searchRemoteBook(query: String): Pair<VolumeEntity, List<AuthorEntity>>?
+
+    // Exportación
+    suspend fun generateCsvReport(): String
 }
