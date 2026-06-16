@@ -13,6 +13,7 @@ Este directorio contiene el conjunto completo de documentos técnicos y funciona
 7.  **[07_Manual_Usuario.md](./07_Manual_Usuario.md)**: Guía ilustrada para el usuario final.
 8.  **[08_Codigo_Fuente.md](./08_Codigo_Fuente.md)**: Anexo con la lógica de negocio y componentes críticos.
 9.  **[09_Politica_Privacidad.md](./09_Politica_Privacidad.md)**: Transparencia sobre el uso de datos y permisos.
+10. **[10_Ficha_Tecnica.md](./10_Ficha_Tecnica.md)**: Resumen técnico del hardware, software y dependencias.
 
 ---
 
