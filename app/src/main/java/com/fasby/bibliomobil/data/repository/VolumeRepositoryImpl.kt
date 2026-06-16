@@ -1,6 +1,7 @@
 package com.fasby.bibliomobil.data.repository
 
 import com.fasby.bibliomobil.data.local.dao.VolumeDao
+import com.fasby.bibliomobil.data.local.database.AppDatabase
 import com.fasby.bibliomobil.data.local.entity.AuthorEntity
 import com.fasby.bibliomobil.data.local.entity.CollectionEntity
 import com.fasby.bibliomobil.data.local.entity.VolumeEntity
@@ -8,19 +9,24 @@ import com.fasby.bibliomobil.data.local.model.DetailedVolume
 import com.fasby.bibliomobil.data.remote.api.GoogleBooksApiService
 import com.fasby.bibliomobil.domain.repository.VolumeRepository
 import com.fasby.bibliomobil.di.IoDispatcher
+import android.content.Context
+import android.net.Uri
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class VolumeRepositoryImpl @Inject constructor(
+    private val database: AppDatabase,
     private val volumeDao: VolumeDao,
     private val googleBooksApi: GoogleBooksApiService,
-    // Suministramos el dispatcher de IO para garantizar que la escritura no bloquee la UI
+    @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : VolumeRepository {
 
@@ -125,5 +131,39 @@ class VolumeRepositoryImpl @Inject constructor(
             "${volume.isbn},\"${volume.title}\",\"$authors\",${volume.publishedYear},${if (volume.isRead) "SI" else "NO"}"
         }
         header + rows
+    }
+
+    override suspend fun clearDatabase() = withContext(ioDispatcher) {
+        database.clearAllTables()
+    }
+
+    override suspend fun createBackup(onUriReady: (Uri) -> Unit): Unit = withContext(ioDispatcher) {
+        try {
+            database.close() // Cerramos para asegurar que todo esté en el .db
+            val dbFile = context.getDatabasePath("biblio_mobil_db")
+            if (dbFile.exists()) {
+                val backupFile = File(context.cacheDir, "backup_bibliomobil_${System.currentTimeMillis()}.db")
+                dbFile.copyTo(backupFile, overwrite = true)
+                onUriReady(Uri.fromFile(backupFile))
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("BiblioMobil", "Error creando backup", e)
+        }
+    }
+
+    override suspend fun restoreBackup(uri: Uri): Boolean = withContext(ioDispatcher) {
+        try {
+            database.close()
+            val dbFile = context.getDatabasePath("biblio_mobil_db")
+            context.contentResolver.openInputStream(uri)?.use { input ->
+                dbFile.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+            true
+        } catch (e: Exception) {
+            android.util.Log.e("BiblioMobil", "Error restaurando backup", e)
+            false
+        }
     }
 }

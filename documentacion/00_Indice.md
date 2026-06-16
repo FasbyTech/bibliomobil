@@ -7,7 +7,7 @@ Este directorio contiene el conjunto completo de documentos técnicos y funciona
 1.  **[01_Resumen_Ejecutivo.md](./01_Resumen_Ejecutivo.md)**: Introducción, visión y objetivos del proyecto.
 2.  **[02_Stack_Tecnologico.md](./02_Stack_Tecnologico.md)**: Detalle de las tecnologías (Kotlin, Compose, Gemini AI, ML Kit).
 3.  **[03_Arquitectura_y_Diseño.md](./03_Arquitectura_y_Diseño.md)**: Explicación de MVVM, Clean Architecture y diseño UX/UI.
-4.  **[04_Funcionalidades_Tecnicas.md](./04_Funcionalidades_Tecnicas.md)**: Análisis del OCR, IA y gestión de datos.
+4.  **[04_Funcionalidades_Tecnicas.md](./04_Funcionalidades_Tecnicas.md)**: Análisis del OCR, IA, gestión de datos y sistema de backup.
 5.  **[05_Seguridad_y_Optimizacion.md](./05_Seguridad_y_Optimizacion.md)**: Auditoría de seguridad y mejores prácticas de rendimiento.
 6.  **[06_Manual_Instalacion.md](./06_Manual_Instalacion.md)**: Guía de despliegue para desarrolladores.
 7.  **[07_Manual_Usuario.md](./07_Manual_Usuario.md)**: Guía ilustrada para el usuario final.

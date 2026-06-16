@@ -42,5 +42,11 @@ Si un libro no tiene sinopsis o quieres mejorarla:
 - **Editar**: Si quieres corregir algún dato o cambiar la portada de un libro ya guardado, pulsa el icono del **lápiz** en la barra superior de la ficha.
 - **Colecciones**: Organiza tus volúmenes por series o sagas seleccionando la colección correspondiente en el desplegable de edición.
 
+## 6. Ajustes y Copias de Seguridad
+Para proteger tus datos, ve a la pestaña **"Ajustes"**:
+- **Crear Backup**: Genera un archivo con toda tu información. Puedes guardarlo en el móvil o subirlo a tu cuenta de **Google Drive**.
+- **Restaurar**: Si cambias de móvil, puedes cargar un archivo de backup previo para recuperar toda tu biblioteca.
+- **Borrar Biblioteca**: Opción para vaciar el catálogo por completo (¡Cuidado, no se puede deshacer!).
+
 ---
 **Consejo**: Para el mejor funcionamiento del escáner, asegúrate de estar en un lugar con buena iluminación y evita los reflejos sobre el código de barras del libro.

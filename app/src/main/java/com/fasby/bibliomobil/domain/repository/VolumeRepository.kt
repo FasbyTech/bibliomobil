@@ -36,4 +36,9 @@ interface VolumeRepository {
 
     // Exportación
     suspend fun generateCsvReport(): String
+
+    // Backup & Restore
+    suspend fun clearDatabase()
+    suspend fun createBackup(onUriReady: (android.net.Uri) -> Unit)
+    suspend fun restoreBackup(uri: android.net.Uri): Boolean
 }

@@ -23,6 +23,8 @@ import com.fasby.bibliomobil.catalog.presentation.CatalogViewModel
 import com.fasby.bibliomobil.catalog.ui.CatalogScreen
 import com.fasby.bibliomobil.collections.presentation.CollectionViewModel
 import com.fasby.bibliomobil.collections.ui.CollectionScreen
+import com.fasby.bibliomobil.settings.presentation.SettingsViewModel
+import com.fasby.bibliomobil.settings.ui.SettingsScreen
 import com.fasby.bibliomobil.volume_detail.presentation.VolumeDetailViewModel
 import com.fasby.bibliomobil.volume_detail.ui.VolumeDetailScreen
 
@@ -33,7 +35,8 @@ fun MainScreen() {
         Screen.Catalog,
         Screen.Collections,
         Screen.Scanner,
-        Screen.AddVolume
+        Screen.AddVolume,
+        Screen.Settings
     )
 
     Scaffold(
@@ -146,6 +149,13 @@ fun MainScreen() {
                     onEditClick = { isbnToEdit ->
                         navController.navigate(Screen.AddVolume.createRoute(isbnToEdit))
                     }
+                )
+            }
+            composable(Screen.Settings.route) {
+                val viewModel: SettingsViewModel = hiltViewModel()
+                SettingsScreen(
+                    viewModel = viewModel,
+                    onBack = { navController.popBackStack() }
                 )
             }
         }

@@ -14,3 +14,9 @@ Se utiliza un motor de análisis de frames que:
 La app actúa como un puente entre la biblioteca del usuario y la IA de Google:
 - **Resúmenes**: Si un libro no tiene descripción, Gemini la genera basándose en el título.
 - **Mejora**: Permite refinar sinopsis existentes para hacerlas más concisas o atractivas.
+
+## 4. Sistema de Backup y Restauración
+BiblioMobil garantiza la seguridad de la biblioteca personal mediante:
+- **Copia de Seguridad**: Exportación completa de la base de datos SQLite.
+- **Integración con Nube**: Opción de compartir el archivo de backup directamente a Google Drive mediante el Share Sheet de Android.
+- **Restauración**: Motor de importación que valida y reemplaza la base de datos activa tras un reinicio de seguridad.

@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.LibraryBooks
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
@@ -18,4 +19,5 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector)
     data object Detail : Screen("detail/{isbn}", "Detalle", Icons.Default.LibraryBooks) {
         fun createRoute(isbn: String) = "detail/$isbn"
     }
+    data object Settings : Screen("settings", "Ajustes", Icons.Default.Settings)
 }
