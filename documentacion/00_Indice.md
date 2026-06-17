@@ -17,6 +17,7 @@ Este directorio contiene el conjunto completo de documentos técnicos y funciona
 11. **[11_Plan_de_Pruebas.md](./11_Plan_de_Pruebas.md)**: Estrategia de validación y escenarios críticos.
 12. **[12_Conclusiones_y_Trabajo_Futuro.md](./12_Conclusiones_y_Trabajo_Futuro.md)**: Cierre académico y roadmap de escalabilidad.
 13. **[13_Bibliografia_y_Referencias.md](./13_Bibliografia_y_Referencias.md)**: Fuentes consultadas y bibliografía técnica.
+14. **[14_Justificacion_y_Defensa_Tecnica.md](./14_Justificacion_y_Defensa_Tecnica.md)**: Guion de defensa para el tribunal con justificación de decisiones de ingeniería.
 
 ---
 
