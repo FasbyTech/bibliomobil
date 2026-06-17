@@ -1,6 +1,6 @@
 # Justificación de la Necesidad y Oportunidad del Proyecto
 
-Este documento justifica la existencia de **BiblioMobil** desde una perspectiva de usuario y de mercado, respondiendo a la pregunta fundamental del tribunal: *¿Por qué es necesario este proyecto?*
+Este documento justifica la existencia de **BiblioMobil** desde una perspectiva de usuario y de mercado, abordando la cuestión central: *¿Por qué es necesario este proyecto?*
 
 ## 1. El Problema: La fricción en la digitalización
 La mayoría de los lectores y coleccionistas de libros físicos carecen de un inventario digital porque el proceso de entrada de datos es **tedioso y manual**. 
