@@ -9,6 +9,7 @@ import com.fasby.bibliomobil.domain.repository.VolumeRepository
 import com.fasby.bibliomobil.di.IoDispatcher
 import android.content.Context
 import android.net.Uri
+import androidx.core.content.FileProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -160,17 +161,29 @@ class VolumeRepositoryImpl @Inject constructor(
     override suspend fun createBackup(onUriReady: (Uri) -> Unit): Unit = withContext(ioDispatcher) {
         try {
             // Forzamos un checkpoint para que todo el contenido de WAL pase al .db principal
-            database.openHelper.writableDatabase.query("PRAGMA wal_checkpoint(FULL)").moveToFirst()
+            try {
+                database.openHelper.writableDatabase.query("PRAGMA wal_checkpoint(FULL)").moveToFirst()
+            } catch (e: Exception) {
+                android.util.Log.w("BiblioMobil", "WAL checkpoint failed or DB not ready, continuing with file copy", e)
+            }
 
             val dbFile = context.getDatabasePath("biblio_mobil_db")
             if (dbFile.exists()) {
                 // Copiamos el archivo de la base de datos a la caché para poder compartirlo
                 val backupFile = File(context.cacheDir, "backup_bibliomobil_${System.currentTimeMillis()}.db")
                 dbFile.copyTo(backupFile, overwrite = true)
-                onUriReady(Uri.fromFile(backupFile))
+                
+                val contentUri = FileProvider.getUriForFile(
+                    context,
+                    "com.fasby.bibliomobil.fileprovider",
+                    backupFile
+                )
+                onUriReady(contentUri)
+            } else {
+                android.util.Log.e("BiblioMobil", "Database file not found at ${dbFile.absolutePath}")
             }
         } catch (e: Exception) {
-            android.util.Log.e("BiblioMobil", "Error creando backup", e)
+            android.util.Log.e("BiblioMobil", "Error fatal creando backup", e)
         }
     }
 
