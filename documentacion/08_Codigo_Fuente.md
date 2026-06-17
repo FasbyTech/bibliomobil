@@ -144,4 +144,34 @@ override suspend fun generateCsvReport(): String = withContext(ioDispatcher) {
 ```
 
 ---
-**Nota**: El código completo está disponible en el repositorio adjunto al proyecto de investigación.
+
+## 5. Complejidad de Datos (Relaciones 1:N)
+
+### LoanEntity.kt (Entidad de Préstamos)
+Definición de claves foráneas con eliminación en cascada.
+
+```kotlin
+@Entity(
+    tableName = "loans",
+    foreignKeys = [
+        ForeignKey(
+            entity = VolumeEntity::class,
+            parentColumns = ["isbn"],
+            childColumns = ["isbn"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
+data class LoanEntity(...)
+```
+
+### DetailedVolume.kt (Modelo de Relación)
+Uso de `@Relation` para recuperar el histórico completo de préstamos de forma automática.
+
+```kotlin
+data class DetailedVolume(
+    @Embedded val volume: VolumeEntity,
+    @Relation(parentColumn = "isbn", entityColumn = "isbn")
+    val loanHistory: List<LoanEntity>
+)
+```

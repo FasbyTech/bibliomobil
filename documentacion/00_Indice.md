@@ -4,21 +4,21 @@ Este directorio contiene el conjunto completo de documentos técnicos y funciona
 
 ### Estructura de la Memoria:
 
-1.  **[01_Resumen_Ejecutivo.md](./01_Resumen_Ejecutivo.md)**: Introducción, visión y objetivos del proyecto.
+1.  **[01_Resumen_Ejecutivo.md](./01_Resumen_Ejecutivo.md)**: Introducción, visión, objetivos y soberanía de datos.
 2.  **[02_Stack_Tecnologico.md](./02_Stack_Tecnologico.md)**: Detalle de las tecnologías (Kotlin, Compose, Gemini AI, ML Kit).
 3.  **[03_Arquitectura_y_Diseño.md](./03_Arquitectura_y_Diseño.md)**: Explicación de MVVM, Clean Architecture y diseño UX/UI.
-4.  **[04_Funcionalidades_Tecnicas.md](./04_Funcionalidades_Tecnicas.md)**: Análisis del OCR, IA, gestión de datos y sistema de backup.
-5.  **[05_Seguridad_y_Optimizacion.md](./05_Seguridad_y_Optimizacion.md)**: Auditoría de seguridad y mejores prácticas de rendimiento.
+4.  **[04_Funcionalidades_Tecnicas.md](./04_Funcionalidades_Tecnicas.md)**: Análisis del OCR, IA, préstamos, exportación y backup.
+5.  **[05_Seguridad_y_Optimizacion.md](./05_Seguridad_y_Optimizacion.md)**: Auditoría de seguridad, firmas SHA-1 y optimización de base de datos.
 6.  **[06_Manual_Instalacion.md](./06_Manual_Instalacion.md)**: Guía de despliegue para desarrolladores.
-7.  **[07_Manual_Usuario.md](./07_Manual_Usuario.md)**: Guía ilustrada para el usuario final.
-8.  **[08_Codigo_Fuente.md](./08_Codigo_Fuente.md)**: Anexo con la lógica de negocio y componentes críticos.
+7.  **[07_Manual_Usuario.md](./07_Manual_Usuario.md)**: Guía de uso, préstamos, reseñas y backups.
+8.  **[08_Codigo_Fuente.md](./08_Codigo_Fuente.md)**: Anexo con lógica de negocio, IA y modelado relacional 1:N.
 9.  **[09_Politica_Privacidad.md](./09_Politica_Privacidad.md)**: Transparencia sobre el uso de datos y permisos.
-10. **[10_Ficha_Tecnica.md](./10_Ficha_Tecnica.md)**: Resumen técnico del hardware, software y dependencias.
-11. **[11_Plan_de_Pruebas.md](./11_Plan_de_Pruebas.md)**: Estrategia de validación y escenarios críticos.
-12. **[12_Conclusiones_y_Trabajo_Futuro.md](./12_Conclusiones_y_Trabajo_Futuro.md)**: Cierre académico y roadmap de escalabilidad.
-13. **[13_Bibliografia_y_Referencias.md](./13_Bibliografia_y_Referencias.md)**: Fuentes consultadas y bibliografía técnica.
-14. **[14_Justificacion_y_Defensa_Tecnica.md](./14_Justificacion_y_Defensa_Tecnica.md)**: Guion de defensa para el tribunal con justificación de decisiones de ingeniería.
-15. **[15_Analisis_de_Necesidad_y_Oportunidad.md](./15_Analisis_de_Necesidad_y_Oportunidad.md)**: Justificación del valor del proyecto y el problema que resuelve en el mercado.
+10. **[10_Ficha_Tecnica.md](./10_Ficha_Tecnica.md)**: Resumen técnico, gestión de préstamos y dependencias.
+11. **[11_Plan_de_Pruebas.md](./11_Plan_de_Pruebas.md)**: Estrategia de validación y escenarios críticos superados.
+12. **[12_Conclusiones_y_Trabajo_Futuro.md](./12_Conclusiones_y_Trabajo_Futuro.md)**: Cierre académico y evolución del proyecto.
+13. **[13_Bibliografia_y_Referencias.md](./13_Bibliografia_y_Referencias.md)**: Fuentes consultadas y marco académico (Big School).
+14. **[14_Justificacion_y_Defensa_Tecnica.md](./14_Justificacion_y_Defensa_Tecnica.md)**: Justificación de decisiones de ingeniería para el tribunal.
+15. **[15_Analisis_de_Necesidad_y_Oportunidad.md](./15_Analisis_de_Necesidad_y_Oportunidad.md)**: Justificación del valor del proyecto y el problema que resuelve.
 
 ---
 

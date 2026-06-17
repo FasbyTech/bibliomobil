@@ -26,3 +26,7 @@ Este documento detalla el razonamiento de ingeniería detrás de las decisiones 
 ## 6. Seguridad: Restricción de APIs mediante SHA-1
 **Decisión**: Inyectar headers de firma en el NetworkModule.
 - **Justificación**: Exponer una API Key en una app Android es un riesgo. Al implementar la restricción por certificado SHA-1 y nombre de paquete, se garantiza que aunque alguien extraiga la Key del APK, esta sea **inutilizable** fuera de este entorno oficial.
+
+## 7. Modelado de Datos: Relaciones 1:N
+**Decisión**: Implementar un sistema de préstamos vinculado a los libros.
+- **Justificación**: Se incluyó para demostrar la capacidad de manejar estructuras de datos complejas. No se limita a una tabla plana, sino que implementa **claves foráneas y relaciones automáticas** mediante Room, garantizando que el borrado de un libro elimine también sus préstamos asociados (Integridad Referencial).

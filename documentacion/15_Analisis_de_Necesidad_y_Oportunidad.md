@@ -15,7 +15,8 @@ Aunque existen grandes plataformas (como Goodreads), estas se centran en el aspe
 ## 3. Privacidad vs. Nube
 En un mundo donde la mayoría de las apps exigen subir toda la información personal a la nube:
 - **Respuesta Ética**: BiblioMobil defiende el modelo **Offline-First**. El usuario es dueño de sus datos. La app funciona sin cuenta y procesa el OCR localmente. 
-- **Necesidad de Soberanía**: La funcionalidad de Backup y Exportación CSV responde a la necesidad de que el usuario no quede "atrapado" en una aplicación (Vendor Lock-in).
+- **Soberanía de Datos**: La funcionalidad de Backup y Exportación CSV responde a la necesidad de que el usuario no quede "atrapado" en una aplicación (Vendor Lock-in).
+- **Gestión del Préstamo Físico**: Resuelve la problemática común de pérdida de ejemplares mediante un sistema de trazabilidad integrado, eliminando la incertidumbre sobre la ubicación actual de la obra.
 
 ## 4. Oportunidad de Mercado
 Existe un auge en el coleccionismo de cómics y libros de edición especial. BiblioMobil se posiciona como una **herramienta técnica de precisión** para este público, que valora tanto la rapidez como la fidelidad de los datos.

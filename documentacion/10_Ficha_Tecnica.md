@@ -35,6 +35,8 @@
 - **Logging**: OkHttp Logging Interceptor
 
 ## 6. Funcionalidades de Gestión de Datos
+- **Gestión de Préstamos**: Control de disponibilidad física y trazabilidad de préstamos.
+- **Crítica Personal**: Sistema de reseñas y valoraciones del usuario.
 - **Exportación**: Generación de reportes en formato CSV.
 - **Respaldo**: Sistema de Backup y Restauración de base de datos SQLite.
 - **Integración Cloud**: Compatibilidad con Google Drive para almacenamiento de backups.

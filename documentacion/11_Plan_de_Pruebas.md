@@ -28,6 +28,8 @@ Se ha seguido la **Pirámide de Pruebas** de Android, centrando los esfuerzos en
 | Funcionalidad | Entrada | Resultado Esperado | Estado |
 | :--- | :--- | :--- | :--- |
 | Escaneo ISBN | Código 9788424116347 | Autocompletado de "El Quijote" tras 3s | **PASSED** |
+| Préstamos | Nombre: "Juan" | El libro cambia a estado "Prestado" y guarda fecha | **PASSED** |
+| Valoración | Pulsar 4 estrellas | El rating se actualiza y persiste localmente | **PASSED** |
 | Búsqueda Voz | "Dragon Ball" | Filtrado instantáneo en el catálogo | **PASSED** |
 | Recorte Portada | Foto de cámara | Editor de crop permite ajustar y guardar | **PASSED** |
 | IA Generativa | Título: "Batman" | Gemini genera una sinopsis en español | **PASSED** |

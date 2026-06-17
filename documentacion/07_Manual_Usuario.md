@@ -36,8 +36,11 @@ Si un libro no tiene sinopsis o quieres mejorarla:
 2. Pulsa el icono del **cerebro (IA)** a la derecha del cuadro de texto.
 3. La IA generará automáticamente un resumen atractivo y profesional basado en el título del libro.
 
-## 5. Gestión de Detalles y Colecciones
+## 5. Gestión de Detalles, Préstamos y Reseñas
 - **Ficha del Libro**: Pulsa sobre cualquier libro del catálogo para ver su información completa.
+- **Valoración**: Pulsa sobre las estrellas para calificar el libro según tu gusto personal.
+- **Mi Reseña**: Escribe tu propia opinión en el cuadro correspondiente y pulsa el botón de guardar.
+- **Préstamos**: Si prestas el libro, pulsa en "Registrar Préstamo" e introduce el nombre. La app marcará el libro como prestado y guardará el registro en el historial inferior.
 - **Estado de Lectura**: Pulsa el botón "Marcar como leído" para llevar el control de tus lecturas.
 - **Editar**: Si quieres corregir algún dato o cambiar la portada de un libro ya guardado, pulsa el icono del **lápiz** en la barra superior de la ficha.
 - **Colecciones**: Organiza tus volúmenes por series o sagas seleccionando la colección correspondiente en el desplegable de edición.

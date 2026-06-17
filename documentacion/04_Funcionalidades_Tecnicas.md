@@ -21,7 +21,13 @@ BiblioMobil garantiza la seguridad de la biblioteca personal mediante:
 - **Integración con Nube**: Opción de compartir el archivo de backup directamente a Google Drive mediante el Share Sheet de Android.
 - **Restauración**: Motor de importación que valida y reemplaza la base de datos activa tras un reinicio de seguridad.
 
-## 5. Exportación de Informes (CSV)
+## 5. Gestión de Préstamos y Valoración
+BiblioMobil evoluciona de un catálogo estático a una herramienta de gestión activa:
+- **Trazabilidad de Préstamos**: Sistema de registro de salida de libros con histórico completo (quién, cuándo y estado de devolución).
+- **Crítica Literaria Personal**: Espacio dedicado para que el usuario redacte sus propias reseñas, diferenciándolas de la sinopsis comercial.
+- **Rating Interactivo**: Sistema de valoración por estrellas (1-5) persistente en la base de datos local.
+
+## 6. Exportación de Informes (CSV)
 Para facilitar la interoperabilidad con otras herramientas (Excel, Google Sheets):
 - **Generación Dinámica**: El sistema recorre la base de datos y genera una cadena CSV estructurada con ISBN, títulos, autores y estado de lectura.
 - **Portabilidad**: Integración con el sistema de intercambio de archivos nativo de Android.
