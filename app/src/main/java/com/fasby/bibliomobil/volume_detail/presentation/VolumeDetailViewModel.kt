@@ -50,8 +50,39 @@ class VolumeDetailViewModel @Inject constructor(
         viewModelScope.launch {
             val updatedVolume = currentVolume.copy(isRead = !currentVolume.isRead)
             repository.updateVolume(updatedVolume)
-            // Recargamos los datos para ver el cambio (Room Flow dispararía cambios pero aquí es un fetch suspend)
             loadVolume(updatedVolume.isbn)
+        }
+    }
+
+    fun updateRating(rating: Int) {
+        val currentVolume = _uiState.value.volume?.volume ?: return
+        viewModelScope.launch {
+            repository.updateVolume(currentVolume.copy(rating = rating))
+            loadVolume(currentVolume.isbn)
+        }
+    }
+
+    fun updateReview(review: String) {
+        val currentVolume = _uiState.value.volume?.volume ?: return
+        viewModelScope.launch {
+            repository.updateVolume(currentVolume.copy(personalReview = review))
+            loadVolume(currentVolume.isbn)
+        }
+    }
+
+    fun registerLoan(lentTo: String) {
+        val isbn = _uiState.value.volume?.volume?.isbn ?: return
+        viewModelScope.launch {
+            repository.registerLoan(isbn, lentTo)
+            loadVolume(isbn)
+        }
+    }
+
+    fun markAsReturned(loanId: String) {
+        val isbn = _uiState.value.volume?.volume?.isbn ?: return
+        viewModelScope.launch {
+            repository.markAsReturned(loanId)
+            loadVolume(isbn)
         }
     }
 }

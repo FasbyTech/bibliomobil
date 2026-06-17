@@ -13,7 +13,8 @@ import com.fasby.bibliomobil.data.local.entity.*
         CollectionEntity::class,
         AuthorEntity::class,
         VolumeAuthorCrossRef::class,
-        VolumeFtsEntity::class
+        VolumeFtsEntity::class,
+        LoanEntity::class
     ],
     version = 1,
     exportSchema = false

@@ -1,10 +1,7 @@
 package com.fasby.bibliomobil.data.local.dao
 
 import androidx.room.*
-import com.fasby.bibliomobil.data.local.entity.AuthorEntity
-import com.fasby.bibliomobil.data.local.entity.CollectionEntity
-import com.fasby.bibliomobil.data.local.entity.VolumeAuthorCrossRef
-import com.fasby.bibliomobil.data.local.entity.VolumeEntity
+import com.fasby.bibliomobil.data.local.entity.*
 import com.fasby.bibliomobil.data.local.model.DetailedVolume
 import kotlinx.coroutines.flow.Flow
 
@@ -50,6 +47,18 @@ interface VolumeDao {
 
     @Update
     suspend fun updateVolume(volume: VolumeEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertLoan(loan: LoanEntity)
+
+    @Update
+    suspend fun updateLoan(loan: LoanEntity)
+
+    @Query("SELECT * FROM loans WHERE id = :loanId LIMIT 1")
+    suspend fun getLoanById(loanId: String): LoanEntity?
+
+    @Query("SELECT * FROM loans WHERE isbn = :isbn ORDER BY loanDate DESC")
+    fun getLoansForVolume(isbn: String): Flow<List<LoanEntity>>
 
     // ========================================================================
     // CONSULTAS REACTIVAS (Lectura mediante Flow)

@@ -27,6 +27,7 @@ data class VolumeEntity(
     val synopsis: String,
     val coverPath: String, // Ruta local en el almacenamiento del dispositivo para la foto
     val rating: Int, // Puntuación de 1 a 5 estrellas
+    val personalReview: String = "",
     val isRead: Boolean = false,
     val createdAt: Long = System.currentTimeMillis()
 )

@@ -2,9 +2,7 @@ package com.fasby.bibliomobil.data.repository
 
 import com.fasby.bibliomobil.data.local.dao.VolumeDao
 import com.fasby.bibliomobil.data.local.database.AppDatabase
-import com.fasby.bibliomobil.data.local.entity.AuthorEntity
-import com.fasby.bibliomobil.data.local.entity.CollectionEntity
-import com.fasby.bibliomobil.data.local.entity.VolumeEntity
+import com.fasby.bibliomobil.data.local.entity.*
 import com.fasby.bibliomobil.data.local.model.DetailedVolume
 import com.fasby.bibliomobil.data.remote.api.GoogleBooksApiService
 import com.fasby.bibliomobil.domain.repository.VolumeRepository
@@ -77,6 +75,20 @@ class VolumeRepositoryImpl @Inject constructor(
 
     override suspend fun getCollectionById(id: String): CollectionEntity? = withContext(ioDispatcher) {
         volumeDao.getCollectionById(id)
+    }
+
+    override suspend fun registerLoan(isbn: String, lentTo: String): Unit = withContext(ioDispatcher) {
+        volumeDao.insertLoan(LoanEntity(isbn = isbn, lentTo = lentTo))
+    }
+
+    override suspend fun markAsReturned(loanId: String): Unit = withContext(ioDispatcher) {
+        volumeDao.getLoanById(loanId)?.let { loan ->
+             volumeDao.updateLoan(loan.copy(returnDate = System.currentTimeMillis()))
+        }
+    }
+
+    override fun getLoanHistory(isbn: String): Flow<List<LoanEntity>> {
+        return volumeDao.getLoansForVolume(isbn)
     }
 
     override suspend fun searchRemoteBook(query: String): Pair<VolumeEntity, List<AuthorEntity>>? = withContext(ioDispatcher) {

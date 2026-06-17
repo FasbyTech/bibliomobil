@@ -2,6 +2,7 @@ package com.fasby.bibliomobil.domain.repository
 
 import com.fasby.bibliomobil.data.local.entity.AuthorEntity
 import com.fasby.bibliomobil.data.local.entity.CollectionEntity
+import com.fasby.bibliomobil.data.local.entity.LoanEntity
 import com.fasby.bibliomobil.data.local.entity.VolumeEntity
 import com.fasby.bibliomobil.data.local.model.DetailedVolume
 import kotlinx.coroutines.flow.Flow
@@ -30,6 +31,11 @@ interface VolumeRepository {
     fun getAllCollections(): Flow<List<CollectionEntity>>
 
     suspend fun getCollectionById(id: String): CollectionEntity?
+
+    // Préstamos
+    suspend fun registerLoan(isbn: String, lentTo: String)
+    suspend fun markAsReturned(loanId: String)
+    fun getLoanHistory(isbn: String): Flow<List<LoanEntity>>
 
     // Sincronización remota
     suspend fun searchRemoteBook(query: String): Pair<VolumeEntity, List<AuthorEntity>>?
