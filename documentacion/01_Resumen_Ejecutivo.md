@@ -8,6 +8,7 @@ BiblioMobil es una solución móvil avanzada diseñada para la catalogación y g
 - **Inteligencia**: Generar sinopsis y categorizar obras automáticamente usando LLMs (Large Language Models).
 - **Accesibilidad**: Implementar búsqueda por voz para facilitar el uso en entornos dinámicos.
 - **Calidad Visual**: Permitir la personalización de portadas mediante herramientas de recorte (cropping) y edición manual.
+- **Soberanía de Datos**: Garantizar que el usuario sea dueño de su información mediante herramientas de exportación (CSV) y sistemas de copia de seguridad (Backup/Restore).
 
 ## 3. Propuesta de Valor
 A diferencia de los catálogos tradicionales, BiblioMobil ofrece un ecosistema híbrido que combina la potencia de la nube (Google Books, Gemini AI) con la eficiencia de una base de datos local robusta (Room FTS), garantizando que la información del usuario siempre esté disponible y enriquecida.

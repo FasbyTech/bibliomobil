@@ -123,4 +123,25 @@ fun AddVolumeScreen(viewModel: AddVolumeViewModel, onBack: () -> Unit) {
 ```
 
 ---
+
+## 4. Gestión de Datos y Portabilidad
+
+### Exportación CSV (VolumeRepositoryImpl.kt)
+Lógica de generación de reportes estructurados.
+
+```kotlin
+override suspend fun generateCsvReport(): String = withContext(ioDispatcher) {
+    val volumes = volumeDao.getAllDetailedVolumesStatic()
+    val header = "ISBN,Titulo,Autores,Año,Leido\n"
+    val rows = volumes.joinToString("\n") { detailed ->
+        val volume = detailed.volume
+        val authors = detailed.authors.joinToString(";") { it.name }
+        "${volume.isbn},\"${volume.title}\",\"$authors\",${volume.publishedYear},${if (volume.isRead) "SI" else "NO"}"
+    }
+    header + rows
+}
+```
+```
+
+---
 **Nota**: El código completo está disponible en el repositorio adjunto al proyecto de investigación.

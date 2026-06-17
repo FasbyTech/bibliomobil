@@ -34,7 +34,12 @@
 - **Edición de Imagen**: Android-Image-Cropper 4.7.0 (CanHub/Vanniktech)
 - **Logging**: OkHttp Logging Interceptor
 
-## 6. Seguridad y Protección de Datos
+## 6. Funcionalidades de Gestión de Datos
+- **Exportación**: Generación de reportes en formato CSV.
+- **Respaldo**: Sistema de Backup y Restauración de base de datos SQLite.
+- **Integración Cloud**: Compatibilidad con Google Drive para almacenamiento de backups.
+
+## 7. Seguridad y Protección de Datos
 - **Protocolos**: Comunicación cifrada de extremo a extremo vía HTTPS (SSL/TLS).
 - **Restricción de API**: Claves restringidas por Nombre de Paquete y Firma SHA-1.
 - **Ofuscación**: Uso de ProGuard/R8 para protección del código fuente.

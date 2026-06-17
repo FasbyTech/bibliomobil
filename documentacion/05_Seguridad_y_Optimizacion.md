@@ -10,6 +10,7 @@ Para cumplir con los estándares de seguridad exigidos en entornos profesionales
 - **Gestión de Memoria**: Uso de `ImageProxy.close()` en el analizador de cámara para evitar fugas de memoria en el procesamiento OCR.
 - **Eficiencia en Red**: Implementación de caché de imágenes mediante Coil y uso de `HttpLoggingInterceptor` (solo en modo debug) para auditoría de tráfico.
 - **Concurrencia**: Uso estricto de `Dispatchers.IO` para operaciones de base de datos y red, manteniendo el hilo principal (Main Thread) libre para una navegación a 60 FPS.
+- **Optimización de Base de Datos**: Uso de `PRAGMA wal_checkpoint(FULL)` en el sistema de backups para garantizar la persistencia de datos volátiles antes de la copia física del archivo `.db`.
 
 ## 3. Calidad de Código
 - **Inyección de Dependencias**: El uso de Hilt permite desacoplar la lógica de red de la lógica de persistencia, facilitando el mantenimiento a largo plazo.

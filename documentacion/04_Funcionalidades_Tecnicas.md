@@ -20,3 +20,8 @@ BiblioMobil garantiza la seguridad de la biblioteca personal mediante:
 - **Copia de Seguridad**: Exportación completa de la base de datos SQLite.
 - **Integración con Nube**: Opción de compartir el archivo de backup directamente a Google Drive mediante el Share Sheet de Android.
 - **Restauración**: Motor de importación que valida y reemplaza la base de datos activa tras un reinicio de seguridad.
+
+## 5. Exportación de Informes (CSV)
+Para facilitar la interoperabilidad con otras herramientas (Excel, Google Sheets):
+- **Generación Dinámica**: El sistema recorre la base de datos y genera una cadena CSV estructurada con ISBN, títulos, autores y estado de lectura.
+- **Portabilidad**: Integración con el sistema de intercambio de archivos nativo de Android.
