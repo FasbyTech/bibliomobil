@@ -52,10 +52,10 @@ Para proteger tus datos, ve a la pestaña **"Ajustes"**:
 - **Borrar Biblioteca**: Opción para vaciar el catálogo por completo (¡Cuidado, no se puede deshacer!).
 
 ## 7. Exportación de Datos
-¿Quieres llevar tu biblioteca a Excel?
-- En la pantalla del **Catálogo**, pulsa el icono de **"Compartir"** en la barra superior.
-- La aplicación generará un archivo **CSV** con toda tu información.
-- Podrás enviarlo por correo, guardarlo en archivos o abrirlo con aplicaciones de hojas de cálculo.
+¿Quieres llevar tu biblioteca a Excel o Google Sheets?
+- En la pantalla del **Catálogo**, pulsa el icono de **"Documento"** en la barra superior.
+- La aplicación generará un archivo **CSV** y te permitirá elegir dónde guardarlo físicamente en tu dispositivo.
+- Una vez guardado, podrás abrirlo con cualquier aplicación de hojas de cálculo o compartirlo libremente.
 
 ---
 **Consejo**: Para el mejor funcionamiento del escáner, asegúrate de estar en un lugar con buena iluminación y evita los reflejos sobre el código de barras del libro.

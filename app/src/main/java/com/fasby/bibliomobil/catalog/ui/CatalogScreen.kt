@@ -1,15 +1,17 @@
 package com.fasby.bibliomobil.catalog.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,6 +34,21 @@ fun CatalogScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    var csvDataToSave by remember { mutableStateOf<String?>(null) }
+
+    // Launcher para crear el archivo CSV físicamente en el dispositivo
+    val createDocumentLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("text/csv")
+    ) { uri ->
+        uri?.let { targetUri ->
+            csvDataToSave?.let { data ->
+                context.contentResolver.openOutputStream(targetUri)?.use { outputStream ->
+                    outputStream.write(data.toByteArray())
+                }
+                csvDataToSave = null // Limpiamos tras guardar
+            }
+        }
+    }
 
     // Animación de color adaptativa para el botón de dictado (Rojo si escucha)
     val micButtonColor by animateColorAsState(
@@ -49,17 +66,14 @@ fun CatalogScreen(
             TopAppBar(
                 title = { Text("Mi Biblioteca Inteligente") },
                 actions = {
+                    // Botón de Exportar (Genera documento físico)
                     IconButton(onClick = {
-                        viewModel.exportToCsv { csvData ->
-                            val intent = Intent(Intent.ACTION_SEND).apply {
-                                type = "text/csv"
-                                putExtra(Intent.EXTRA_SUBJECT, "Exportación Biblioteca BiblioMobil")
-                                putExtra(Intent.EXTRA_TEXT, csvData)
-                            }
-                            context.startActivity(Intent.createChooser(intent, "Compartir CSV"))
+                        viewModel.exportToCsv { data ->
+                            csvDataToSave = data
+                            createDocumentLauncher.launch("biblioteca_bibliomobil.csv")
                         }
                     }) {
-                        Icon(Icons.Default.Share, contentDescription = "Exportar CSV")
+                        Icon(Icons.Default.Description, contentDescription = "Exportar a CSV")
                     }
                 }
             )

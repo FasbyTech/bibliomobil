@@ -30,4 +30,4 @@ BiblioMobil evoluciona de un catálogo estático a una herramienta de gestión a
 ## 6. Exportación de Informes (CSV)
 Para facilitar la interoperabilidad con otras herramientas (Excel, Google Sheets):
 - **Generación Dinámica**: El sistema recorre la base de datos y genera una cadena CSV estructurada con ISBN, títulos, autores y estado de lectura.
-- **Portabilidad**: Integración con el sistema de intercambio de archivos nativo de Android.
+- **Creación de Documento**: Integración con el *Storage Access Framework* (SAF) de Android para permitir al usuario crear y guardar físicamente el archivo en cualquier ubicación del dispositivo.
