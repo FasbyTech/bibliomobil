@@ -1,21 +1,36 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# BiblioMobil - ProGuard/R8 Rules
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Hilt / Dagger
+-keep class dagger.hilt.** { *; }
+-keep class com.fasby.bibliomobil.BiblioMobilApp_HiltComponents** { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Room
+-keep class * extends androidx.room.RoomDatabase
+-keep class androidx.room.RoomDatabase { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Retrofit / OkHttp
+-keepattributes Signature, InnerClasses, EnclosingMethod
+-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
+-keepattributes RuntimeInvisibleAnnotations, RuntimeVisibleTypeAnnotations
+-keepclassmembers,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+
+# Gemini AI (Generative AI)
+-keep class com.google.ai.client.generativeai.** { *; }
+
+# ML Kit
+-keep class com.google.mlkit.** { *; }
+
+# Coil
+-keep class coil.** { *; }
+
+# Kotlin Coroutines
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+-keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
+-keepclassmembernames class kotlinx.coroutines.android.HandlerContext {
+    private final android.os.Handler handler;
+}
+
+# Image Cropper
+-keep class com.canhub.cropper.** { *; }
