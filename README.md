@@ -1,9 +1,5 @@
 # BiblioMobil - Gestión Inteligente de Bibliotecas Personales
 
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.4.0-blue.svg)](https://kotlinlang.org)
-[![Platform](https://img.shields.io/badge/Platform-Android-green.svg)](https://developer.android.com)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
 Proyecto final (TFM) para el **Máster en Desarrollo con IA** de **Big School**.
 
 ---
@@ -105,8 +101,7 @@ app/
             └── di/                   # Módulos de Inyección de Dependencias con Hilt
 ```
 
-> 📔 **Nota Académica:** El repositorio incluye un dossier académico detallado con la justificación técnica del proyecto en la ruta `/documentacion`, compuesto por archivos clave como `01_Resumen_Ejecutivo.pdf`, `04_Funcionalidades_Tecnicas.pdf`, `10_Ficha_Tecnica.pdf`, `14_Justificacion_y_Defensa_Tecnica.pdf` y el `Manual de Usuario`.
-
+> 📔 **Nota Académica:** El repositorio incluye un dossier académico detallado con la justificación técnica del proyecto en la ruta `/documentacion`.
 ---
 
 ## ✨ Funcionalidades Detalladas
