@@ -10,6 +10,7 @@
 - **Búsqueda por Voz**: Use el botón del micrófono para dictar títulos.
 - **Préstamos**: Registre a quién presta sus libros desde la ficha de detalle.
 - **Valoración**: Califique sus lecturas con el sistema de estrellas.
+- **Gestión Avanzada**: Elimine libros o colecciones de forma independiente desde sus respectivas pantallas de edición. Al eliminar una colección, los libros asociados permanecerán en su catálogo general.
 
 ## Backups
 - Acceda a **Ajustes** para crear una copia de seguridad y guardarla en local o en Google Drive.

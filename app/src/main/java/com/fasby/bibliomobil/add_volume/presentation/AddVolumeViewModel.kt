@@ -23,6 +23,7 @@ data class AddVolumeUiState(
     val collections: List<CollectionEntity> = emptyList(),
     val isLoading: Boolean = false,
     val isSaved: Boolean = false,
+    val isDeleted: Boolean = false,
     val isEditMode: Boolean = false,
     val error: String? = null
 )
@@ -152,6 +153,19 @@ class AddVolumeViewModel @Inject constructor(
                 } else {
                     _uiState.update { it.copy(isLoading = false, error = "No se encontraron datos para este ISBN ($isbn).") }
                 }
+            }
+        }
+    }
+
+    fun deleteVolume() {
+        val isbn = _uiState.value.isbn
+        if (isbn.isBlank()) return
+        
+        viewModelScope.launch {
+            val volumeDetail = repository.getVolumeByIsbn(isbn)
+            volumeDetail?.let {
+                repository.deleteVolume(it.volume)
+                _uiState.update { it.copy(isDeleted = true) }
             }
         }
     }

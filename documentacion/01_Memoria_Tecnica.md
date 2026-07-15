@@ -1,7 +1,7 @@
 # Memoria Técnica: BiblioMobil
 
 ## 1. Resumen Ejecutivo
-BiblioMobil es una aplicación Android nativa diseñada para la gestión inteligente de bibliotecas personales. Utiliza OCR para el escaneo de ISBN, Inteligencia Artificial (Gemini) para el enriquecimiento de datos y un sistema de préstamos para la trazabilidad de ejemplares físicos.
+BiblioMobil es una aplicación Android nativa diseñada para la gestión inteligente de bibliotecas personales. Utiliza OCR para el escaneo de ISBN, Inteligencia Artificial (Gemini) para el enriquecimiento de datos y un sistema de préstamos para la trazabilidad de ejemplares físicos. El sistema permite una gestión integral de volúmenes y colecciones, incluyendo la eliminación segura de registros y la desvinculación flexible de series.
 
 ## 2. Justificación de Necesidad
 El proyecto resuelve la fricción en la digitalización de colecciones físicas, eliminando la entrada manual de datos y garantizando la soberanía de la información mediante un modelo *offline-first*.

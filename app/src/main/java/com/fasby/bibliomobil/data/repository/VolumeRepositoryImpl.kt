@@ -62,6 +62,10 @@ class VolumeRepositoryImpl @Inject constructor(
         volumeDao.insertCollection(collection)
     }
 
+    override suspend fun deleteCollection(collection: CollectionEntity): Unit = withContext(ioDispatcher) {
+        volumeDao.deleteCollection(collection)
+    }
+
     override suspend fun deleteVolume(volume: VolumeEntity) = withContext(ioDispatcher) {
         volumeDao.deleteVolume(volume)
     }

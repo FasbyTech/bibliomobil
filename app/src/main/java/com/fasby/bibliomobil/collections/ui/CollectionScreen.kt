@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -44,9 +45,21 @@ fun CollectionScreen(
                         onClick = { onCollectionClick(collection.id) },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(text = collection.name, style = MaterialTheme.typography.titleLarge)
-                            Text(text = "Editorial: ${collection.publisher}", style = MaterialTheme.typography.bodyMedium)
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(text = collection.name, style = MaterialTheme.typography.titleLarge)
+                                Text(text = "Editorial: ${collection.publisher}", style = MaterialTheme.typography.bodyMedium)
+                            }
+                            IconButton(onClick = { viewModel.deleteCollection(collection) }) {
+                                Icon(
+                                    Icons.Default.Delete, 
+                                    contentDescription = "Eliminar colección",
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
                         }
                     }
                 }

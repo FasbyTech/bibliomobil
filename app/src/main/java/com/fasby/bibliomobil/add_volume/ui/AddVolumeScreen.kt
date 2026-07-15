@@ -31,7 +31,7 @@ fun AddVolumeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    if (uiState.isSaved) {
+    if (uiState.isSaved || uiState.isDeleted) {
         onBack()
     }
 
@@ -45,6 +45,31 @@ fun AddVolumeScreen(
     }
 
     var showImageSourceDialog by remember { mutableStateOf(false) }
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
+
+    if (showDeleteConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmDialog = false },
+            title = { Text("¿Eliminar este libro?") },
+            text = { Text("Esta acción no se puede deshacer y borrará también el historial de préstamos.") },
+            confirmButton = {
+                Button(
+                    onClick = { 
+                        viewModel.deleteVolume()
+                        showDeleteConfirmDialog = false 
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text("Eliminar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirmDialog = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
 
     if (showImageSourceDialog) {
         AlertDialog(
@@ -108,6 +133,17 @@ fun AddVolumeScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                    }
+                },
+                actions = {
+                    if (uiState.isEditMode) {
+                        IconButton(onClick = { showDeleteConfirmDialog = true }) {
+                            Icon(
+                                Icons.Default.Delete, 
+                                contentDescription = "Eliminar",
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
                     }
                 }
             )

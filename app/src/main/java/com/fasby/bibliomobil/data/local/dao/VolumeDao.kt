@@ -18,6 +18,9 @@ interface VolumeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCollection(collection: CollectionEntity)
 
+    @Delete
+    suspend fun deleteCollection(collection: CollectionEntity)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAuthor(author: AuthorEntity)
 

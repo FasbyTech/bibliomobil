@@ -34,4 +34,10 @@ class CollectionViewModel @Inject constructor(
             repository.saveCollection(collection)
         }
     }
+
+    fun deleteCollection(collection: CollectionEntity) {
+        viewModelScope.launch {
+            repository.deleteCollection(collection)
+        }
+    }
 }

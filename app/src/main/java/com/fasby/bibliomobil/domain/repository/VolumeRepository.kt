@@ -24,6 +24,8 @@ interface VolumeRepository {
     
     suspend fun saveCollection(collection: CollectionEntity)
     
+    suspend fun deleteCollection(collection: CollectionEntity)
+    
     suspend fun deleteVolume(volume: VolumeEntity)
 
     suspend fun updateVolume(volume: VolumeEntity)
