@@ -6,6 +6,21 @@ Este documento contiene una recopilación de las clases más críticas del proye
 
 ## 1. Capa de Datos (Data Layer)
 
+### VolumeEntity.kt
+Representa el modelo persistente de un libro con campos extendidos para valoraciones y reseñas.
+
+```kotlin
+@Entity(tableName = "volumes")
+data class VolumeEntity(
+    @PrimaryKey val isbn: String,
+    val title: String,
+    val rating: Int, // 1-5 estrellas
+    val personalReview: String = "",
+    val isRead: Boolean = false,
+    val createdAt: Long = System.currentTimeMillis()
+)
+```
+
 ### VolumeRepositoryImpl.kt
 Gestiona la lógica de negocio de los datos, integrando Room, Retrofit y el sistema de archivos para Backups.
 
@@ -46,7 +61,7 @@ class VolumeRepositoryImpl @Inject constructor(
 ```
 
 ### VolumeDao.kt
-Definición de las consultas SQL y transacciones atómicas.
+Definición de las consultas SQL, transacciones atómicas y gestión de la tabla de préstamos.
 
 ```kotlin
 @Dao
@@ -55,10 +70,36 @@ interface VolumeDao {
     @Query("SELECT * FROM volumes ORDER BY createdAt DESC")
     fun getAllDetailedVolumes(): Flow<List<DetailedVolume>>
 
-    @Transaction
-    @Query("SELECT * FROM volumes WHERE title LIKE '%' || :searchQuery || '%' OR synopsis LIKE '%' || :query || '%'")
-    fun searchVolumesFts(searchQuery: String): Flow<List<DetailedVolume>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertLoan(loan: LoanEntity)
+
+    @Query("SELECT * FROM loans WHERE isbn = :isbn ORDER BY loanDate DESC")
+    fun getLoansForVolume(isbn: String): Flow<List<LoanEntity>>
 }
+```
+
+### LoanEntity.kt
+Entidad que representa un préstamo vinculado a un volumen mediante una relación 1:N con borrado en cascada.
+
+```kotlin
+@Entity(
+    tableName = "loans",
+    foreignKeys = [
+        ForeignKey(
+            entity = VolumeEntity::class,
+            parentColumns = ["isbn"],
+            childColumns = ["isbn"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
+data class LoanEntity(
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
+    val isbn: String,
+    val lentTo: String,
+    val loanDate: Long = System.currentTimeMillis(),
+    val returnDate: Long? = null
+)
 ```
 
 ---

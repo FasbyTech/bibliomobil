@@ -9,7 +9,7 @@
 - **Catálogo**: Filtre libros por título o sinopsis.
 - **Búsqueda por Voz**: Use el botón del micrófono para dictar títulos.
 - **Préstamos**: Registre a quién presta sus libros desde la ficha de detalle.
-- **Valoración**: Califique sus lecturas con el sistema de estrellas.
+- **Valoración y Reseña**: Califique sus lecturas con el sistema de estrellas y guarde su propia opinión personal en cada tomo.
 - **Gestión Avanzada**: Elimine libros o colecciones de forma independiente desde sus respectivas pantallas de edición. Al eliminar una colección, los libros asociados permanecerán en su catálogo general.
 
 ## Backups
