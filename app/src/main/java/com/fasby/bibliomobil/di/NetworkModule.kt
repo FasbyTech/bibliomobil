@@ -37,11 +37,18 @@ object NetworkModule {
                     .build()
                 
                 // Configuración de cabeceras de seguridad para restringir el uso de la Key
+                val cert = "c90fdadc5ca9c56618328f6695584abcbffdeb29"
+                val pkg = "com.fasby.bibliomobil"
+                
                 val request = originalRequest.newBuilder()
                     .url(urlWithKey)
-                    .header("X-Android-Package", "com.fasby.bibliomobil")
-                    .header("X-Android-Cert", "C90FDADC5CA9C56618328F6695584ABCBFFDEB29")
+                    .header("X-Android-Package", pkg)
+                    .header("X-Android-Cert", cert)
                     .build()
+                
+                if (com.fasby.bibliomobil.BuildConfig.DEBUG) {
+                    android.util.Log.d("BiblioMobilAuth", "Sending headers - Pkg: $pkg, Cert: $cert")
+                }
                 
                 chain.proceed(request)
             }
