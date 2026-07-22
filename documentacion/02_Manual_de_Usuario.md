@@ -2,8 +2,9 @@
 
 ## Registro de Libros
 1. **Escaneo**: Use la pestaña 'Escáner' para leer el código ISBN. Espere 3 segundos para la confirmación.
-2. **Autocompletado**: Los datos se cargarán automáticamente desde internet.
-3. **Portada**: Toca la imagen superior para sacar una foto o elegir de la galería y realiza el recorte (crop).
+2. **Autocompletado (Varita Mágica)**: Tras introducir un ISBN, pulse el icono de la **varita mágica**. La app buscará automáticamente los metadatos en bases de datos globales (Google Books y Open Library) para rellenar título, autores y sinopsis.
+3. **Resumen por IA (Cerebro)**: Si un libro carece de descripción o desea una reseña enriquecida, pulse el icono del **cerebro**. La IA de Gemini generará un resumen inteligente basado en el título y autor.
+4. **Portada**: Toca la imagen superior para sacar una foto o elegir de la galería y realiza el recorte (crop).
 
 ## Gestión de la Biblioteca
 - **Catálogo**: Filtre libros por título o sinopsis.
