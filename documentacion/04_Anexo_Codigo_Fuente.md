@@ -21,6 +21,25 @@ data class VolumeEntity(
 )
 ```
 
+### OpenLibraryApiService.kt
+Interfaz para el sistema de fallback que permite recuperar metadatos y portadas cuando el servicio de Google falla.
+
+```kotlin
+interface OpenLibraryApiService {
+    @GET("search.json")
+    suspend fun searchBooks(
+        @Query("q") query: String? = null,
+        @Query("isbn") isbn: String? = null,
+        @Query("limit") limit: Int = 1
+    ): Response<OpenLibraryResponse>
+
+    @GET("{workKey}.json")
+    suspend fun getWorkDetails(
+        @Path("workKey", encoded = false) workKey: String
+    ): Response<OpenLibraryWorkResponse>
+}
+```
+
 ### VolumeRepositoryImpl.kt
 Gestiona la lógica de negocio de los datos, integrando Room, Retrofit y el sistema de archivos para Backups. Incluye una estrategia secuencial de búsqueda (Google Books -> Open Library).
 
@@ -219,4 +238,28 @@ object NetworkModule {
             }.build()
     }
 }
+
+---
+
+## 4. Capa de Inteligencia Artificial (AI Layer)
+
+### GeminiAiRepositoryImpl.kt
+Implementación del cliente de Gemini 1.5 Flash para la generación de resúmenes y categorización automática mediante modelos generativos.
+
+```kotlin
+@Singleton
+class GeminiAiRepositoryImpl @Inject constructor() : AiRepository {
+    private val generativeModel = GenerativeModel(
+        modelName = "gemini-1.5-flash",
+        apiKey = BuildConfig.GEMINI_API_KEY
+    )
+
+    override suspend fun generateSummary(title: String, synopsis: String): String? {
+        return try {
+            val response = generativeModel.generateContent("Genera un resumen corto en español para: $title. Sinopsis: $synopsis")
+            response.text
+        } catch (e: Exception) { null }
+    }
+}
+```
 ```
