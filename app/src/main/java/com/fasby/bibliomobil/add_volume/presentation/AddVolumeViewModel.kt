@@ -69,15 +69,26 @@ class AddVolumeViewModel @Inject constructor(
     fun generateAiSummary() {
         val title = _uiState.value.title
         val currentSynopsis = _uiState.value.synopsis
-        if (title.isBlank()) return
+        android.util.Log.d("BiblioMobilAI", "generateAiSummary click. Title: $title")
+        if (title.isBlank()) {
+            android.util.Log.w("BiblioMobilAI", "Title is blank, ignoring.")
+            return
+        }
 
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            val summary = aiRepository.generateSummary(title, currentSynopsis)
-            if (summary != null) {
-                _uiState.update { it.copy(synopsis = summary, isLoading = false) }
-            } else {
-                _uiState.update { it.copy(isLoading = false, error = "Error al conectar con Gemini.") }
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val summary = aiRepository.generateSummary(title, currentSynopsis)
+                if (summary != null) {
+                    android.util.Log.d("BiblioMobilAI", "Summary generated: ${summary.take(20)}...")
+                    _uiState.update { it.copy(synopsis = summary, isLoading = false) }
+                } else {
+                    android.util.Log.e("BiblioMobilAI", "Summary returned null")
+                    _uiState.update { it.copy(isLoading = false, error = "Error al conectar con Gemini (posible falta de API Key).") }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("BiblioMobilAI", "Exception in generateAiSummary", e)
+                _uiState.update { it.copy(isLoading = false, error = "Error fatal en IA: ${e.message}") }
             }
         }
     }
@@ -87,26 +98,38 @@ class AddVolumeViewModel @Inject constructor(
     }
 
     fun setInitialIsbn(isbn: String) {
-        if (isbn.isNotBlank() && _uiState.value.isbn != isbn) {
-            viewModelScope.launch {
-                val existingVolume = repository.getVolumeByIsbn(isbn)
-                if (existingVolume != null) {
-                    _uiState.update { 
-                        it.copy(
-                            isbn = existingVolume.volume.isbn,
-                            title = existingVolume.volume.title,
-                            authors = existingVolume.authors.joinToString(", ") { it.name },
-                            publishedYear = existingVolume.volume.publishedYear.toString(),
-                            synopsis = existingVolume.volume.synopsis,
-                            coverPath = existingVolume.volume.coverPath,
-                            collectionId = existingVolume.volume.collectionId,
-                            isEditMode = true
-                        )
-                    }
-                } else {
-                    _uiState.update { it.copy(isbn = isbn, isEditMode = false) }
-                    autocomplete()
+        val sanitizedIsbn = isbn.trim()
+        if (sanitizedIsbn.isBlank() || sanitizedIsbn == "{isbn}") {
+            android.util.Log.w("BiblioMobil", "setInitialIsbn: ISBN no válido '$sanitizedIsbn'")
+            return
+        }
+        
+        // Reiniciamos todo el estado para evitar que queden datos de una edición anterior
+        _uiState.value = AddVolumeUiState(isbn = sanitizedIsbn, isLoading = true)
+
+        viewModelScope.launch {
+            android.util.Log.d("BiblioMobil", "Cargando datos para ISBN: $sanitizedIsbn")
+            val existingVolume = repository.getVolumeByIsbn(sanitizedIsbn)
+            
+            if (existingVolume != null) {
+                android.util.Log.d("BiblioMobil", "Tomo encontrado en DB local: ${existingVolume.volume.title}")
+                _uiState.update { 
+                    it.copy(
+                        isbn = existingVolume.volume.isbn,
+                        title = existingVolume.volume.title,
+                        authors = existingVolume.authors.joinToString(", ") { a -> a.name },
+                        publishedYear = existingVolume.volume.publishedYear.toString(),
+                        synopsis = existingVolume.volume.synopsis,
+                        coverPath = existingVolume.volume.coverPath,
+                        collectionId = existingVolume.volume.collectionId,
+                        isEditMode = true,
+                        isLoading = false
+                    )
                 }
+            } else {
+                android.util.Log.d("BiblioMobil", "ISBN no encontrado en DB. Iniciando búsqueda remota.")
+                _uiState.update { it.copy(isEditMode = false) }
+                autocomplete()
             }
         }
     }
@@ -174,11 +197,24 @@ class AddVolumeViewModel @Inject constructor(
      * Persiste el volumen y sus autores en la base de datos local.
      */
     fun saveVolume() {
+        val state = _uiState.value
+        
+        // Validación crítica: No permitir ISBN vacío
+        if (state.isbn.isBlank()) {
+            _uiState.update { it.copy(error = "El ISBN es obligatorio.") }
+            return
+        }
+
+        if (state.title.isBlank()) {
+            _uiState.update { it.copy(error = "El título es obligatorio.") }
+            return
+        }
+
         viewModelScope.launch {
-            val state = _uiState.value
+            android.util.Log.d("BiblioMobil", "Guardando tomo: ${state.title} con ISBN: ${state.isbn} (Edit: ${state.isEditMode})")
             
-            // Si es modo edición, podríamos necesitar recuperar el rating y estado de lectura original
-            val existing = if (state.isEditMode) repository.getVolumeByIsbn(state.isbn) else null
+            // Si es modo edición, recuperamos datos que no están en el formulario (rating, etc)
+            val existing = repository.getVolumeByIsbn(state.isbn)
             
             val volume = VolumeEntity(
                 isbn = state.isbn,
@@ -189,15 +225,22 @@ class AddVolumeViewModel @Inject constructor(
                 synopsis = state.synopsis,
                 coverPath = state.coverPath,
                 rating = existing?.volume?.rating ?: 0,
+                personalReview = existing?.volume?.personalReview ?: "",
                 isRead = existing?.volume?.isRead ?: false,
                 createdAt = existing?.volume?.createdAt ?: System.currentTimeMillis()
             )
-            val authors = state.authors.split(",").map { 
+            val authors = state.authors.split(",").filter { it.isNotBlank() }.map { 
                 AuthorEntity(id = java.util.UUID.randomUUID().toString(), name = it.trim(), role = "Autor") 
             }
 
-            repository.saveCompleteVolume(volume, authors)
-            _uiState.update { it.copy(isSaved = true) }
+            try {
+                repository.saveCompleteVolume(volume, authors)
+                android.util.Log.d("BiblioMobil", "Tomo guardado con éxito")
+                _uiState.update { it.copy(isSaved = true) }
+            } catch (e: Exception) {
+                android.util.Log.e("BiblioMobil", "Error al guardar tomo", e)
+                _uiState.update { it.copy(error = "Error al guardar en la base de datos.") }
+            }
         }
     }
 }

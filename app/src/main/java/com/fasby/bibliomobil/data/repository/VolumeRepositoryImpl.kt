@@ -5,6 +5,7 @@ import com.fasby.bibliomobil.data.local.database.AppDatabase
 import com.fasby.bibliomobil.data.local.entity.*
 import com.fasby.bibliomobil.data.local.model.DetailedVolume
 import com.fasby.bibliomobil.data.remote.api.GoogleBooksApiService
+import com.fasby.bibliomobil.data.remote.api.OpenLibraryApiService
 import com.fasby.bibliomobil.domain.repository.VolumeRepository
 import com.fasby.bibliomobil.di.IoDispatcher
 import android.content.Context
@@ -25,6 +26,7 @@ class VolumeRepositoryImpl @Inject constructor(
     private val database: AppDatabase,
     private val volumeDao: VolumeDao,
     private val googleBooksApi: GoogleBooksApiService,
+    private val openLibraryApi: OpenLibraryApiService,
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : VolumeRepository {
@@ -98,47 +100,114 @@ class VolumeRepositoryImpl @Inject constructor(
 
     override suspend fun searchRemoteBook(query: String): Pair<VolumeEntity, List<AuthorEntity>>? = withContext(ioDispatcher) {
         try {
-            val response = try {
+            android.util.Log.d("BiblioMobil", "Iniciando búsqueda remota: $query")
+            
+            // INTENTO 1: Google Books
+            val googleResponse = try {
                 googleBooksApi.searchBooks(query)
             } catch (e: Exception) {
+                android.util.Log.e("BiblioMobil", "Error de red en Google Books: ${e.message}")
                 null
             }
             
-            // Si no hay resultados por ISBN, intentamos una búsqueda general con el mismo término
-            val items = if (response?.items.isNullOrEmpty() && query.startsWith("isbn:")) {
-                val generalQuery = query.removePrefix("isbn:").trim()
-                googleBooksApi.searchBooks(generalQuery, maxResults = 3).items
-            } else {
-                response?.items
+            var items = if (googleResponse?.isSuccessful == true) googleResponse.body()?.items else null
+
+            // Fallback Google Books: Si es un ISBN, probamos solo el número
+            if (items.isNullOrEmpty() && query.startsWith("isbn:")) {
+                val cleanIsbn = query.removePrefix("isbn:").trim()
+                val response2 = try { googleBooksApi.searchBooks(cleanIsbn, maxResults = 3) } catch (e: Exception) { null }
+                items = if (response2?.isSuccessful == true) response2.body()?.items else null
             }
 
-            val book = items?.firstOrNull()?.volumeInfo ?: return@withContext null
+            if (!items.isNullOrEmpty()) {
+                val book = items.first().volumeInfo
+                android.util.Log.d("BiblioMobil", "¡Éxito en Google Books! Libro encontrado: ${book.title}")
+                
+                val authors = book.authors?.map { name ->
+                    AuthorEntity(id = UUID.randomUUID().toString(), name = name, role = "Autor")
+                } ?: emptyList()
 
-            android.util.Log.d("BiblioMobil", "Libro encontrado: ${book.title}")
-            val authors = book.authors?.map { name ->
-                AuthorEntity(id = UUID.randomUUID().toString(), name = name, role = "Autor")
-            } ?: emptyList()
+                val remoteIsbn = book.industryIdentifiers?.find { it.type == "ISBN_13" }?.identifier
+                    ?: book.industryIdentifiers?.find { it.type == "ISBN_10" }?.identifier
+                    ?: query.filter { it.isDigit() }.ifBlank { UUID.randomUUID().toString() }
 
-            // Intentamos extraer el ISBN13, si no, el ISBN10, si no, usamos el de la query o un UUID
-            val remoteIsbn = book.industryIdentifiers?.find { it.type == "ISBN_13" }?.identifier
-                ?: book.industryIdentifiers?.find { it.type == "ISBN_10" }?.identifier
-                ?: query.filter { it.isDigit() }.ifBlank { UUID.randomUUID().toString() }
+                val volume = VolumeEntity(
+                    isbn = remoteIsbn,
+                    collectionId = null,
+                    title = book.title,
+                    number = 0,
+                    publishedYear = book.publishedDate?.take(4)?.toIntOrNull() ?: 0,
+                    synopsis = book.description ?: "",
+                    coverPath = book.imageLinks?.thumbnail?.replace("http:", "https:") ?: "",
+                    rating = 0,
+                    isRead = false
+                )
+                return@withContext Pair(volume, authors)
+            }
 
-            val volume = VolumeEntity(
-                isbn = remoteIsbn,
-                collectionId = null,
-                title = book.title,
-                number = 0,
-                publishedYear = book.publishedDate?.take(4)?.toIntOrNull() ?: 0,
-                synopsis = book.description ?: "",
-                coverPath = book.imageLinks?.thumbnail?.replace("http:", "https:") ?: "",
-                rating = 0,
-                isRead = false
-            )
+            // INTENTO 2: Open Library (Fallback si Google falla o no tiene resultados)
+            android.util.Log.d("BiblioMobil", "Google Books falló o no dio resultados. Probando Open Library...")
+            val cleanIsbnOnly = query.removePrefix("isbn:").trim()
+            
+            // Intento A: Búsqueda general
+            var olResponse = try {
+                openLibraryApi.searchBooks(query = cleanIsbnOnly)
+            } catch (e: Exception) {
+                null
+            }
 
-            Pair(volume, authors)
+            // Intento B: Si el A falla, búsqueda específica por campo ISBN
+            if (olResponse?.isSuccessful != true || olResponse.body()?.docs.isNullOrEmpty()) {
+                android.util.Log.d("BiblioMobil", "Open Library búsqueda general sin éxito. Probando campo ISBN específico...")
+                olResponse = try {
+                    openLibraryApi.searchBooks(isbn = cleanIsbnOnly)
+                } catch (e: Exception) {
+                    null
+                }
+            }
+
+                val olDocs = if (olResponse?.isSuccessful == true) olResponse.body()?.docs else null
+                if (!olDocs.isNullOrEmpty()) {
+                    val doc = olDocs.first()
+                    android.util.Log.d("BiblioMobil", "¡Éxito en Open Library! Libro encontrado: ${doc.title}")
+
+                    // Intentamos obtener la sinopsis desde la Work Key
+                    var remoteSynopsis = ""
+                    doc.key?.let { key ->
+                        try {
+                            android.util.Log.d("BiblioMobil", "Buscando descripción ampliada en OL: $key")
+                            val workResponse = openLibraryApi.getWorkDetails(key.removePrefix("/"))
+                            if (workResponse.isSuccessful) {
+                                remoteSynopsis = workResponse.body()?.getDescriptionText() ?: ""
+                                android.util.Log.d("BiblioMobil", "Sinopsis OL encontrada (${remoteSynopsis.length} chars)")
+                            }
+                        } catch (e: Exception) {
+                            android.util.Log.w("BiblioMobil", "No se pudo obtener descripción de OL: ${e.message}")
+                        }
+                    }
+
+                    val authors = doc.authorName?.map { name ->
+                        AuthorEntity(id = UUID.randomUUID().toString(), name = name, role = "Autor")
+                    } ?: emptyList()
+
+                    val volume = VolumeEntity(
+                        isbn = doc.isbn?.firstOrNull() ?: cleanIsbnOnly,
+                        collectionId = null,
+                        title = doc.title,
+                        number = 0,
+                        publishedYear = doc.firstPublishYear ?: 0,
+                        synopsis = remoteSynopsis,
+                        coverPath = doc.getCoverUrl() ?: "",
+                        rating = 0,
+                        isRead = false
+                    )
+                    return@withContext Pair(volume, authors)
+                }
+
+            android.util.Log.w("BiblioMobil", "No se encontraron resultados en ninguna fuente para: $query")
+            null
         } catch (e: Exception) {
-            android.util.Log.e("BiblioMobil", "Error en búsqueda remota", e)
+            android.util.Log.e("BiblioMobil", "Error fatal en búsqueda remota", e)
             null
         }
     }

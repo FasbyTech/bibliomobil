@@ -22,7 +22,7 @@ data class VolumeEntity(
 ```
 
 ### VolumeRepositoryImpl.kt
-Gestiona la lógica de negocio de los datos, integrando Room, Retrofit y el sistema de archivos para Backups.
+Gestiona la lógica de negocio de los datos, integrando Room, Retrofit y el sistema de archivos para Backups. Incluye una estrategia secuencial de búsqueda (Google Books -> Open Library).
 
 ```kotlin
 @Singleton
@@ -30,17 +30,41 @@ class VolumeRepositoryImpl @Inject constructor(
     private val database: AppDatabase,
     private val volumeDao: VolumeDao,
     private val googleBooksApi: GoogleBooksApiService,
+    private val openLibraryApi: OpenLibraryApiService,
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : VolumeRepository {
 
-    override fun searchVolumes(query: String): Flow<List<DetailedVolume>> {
-        val trimmedQuery = query.trim()
-        return if (trimmedQuery.isEmpty()) {
-            volumeDao.getAllDetailedVolumes()
-        } else {
-            volumeDao.searchVolumesFts(trimmedQuery)
-        }
+    override suspend fun searchRemoteBook(query: String): Pair<VolumeEntity, List<AuthorEntity>>? = withContext(ioDispatcher) {
+        try {
+            // INTENTO 1: Google Books
+            val googleResponse = googleBooksApi.searchBooks(query)
+            var items = if (googleResponse.isSuccessful) googleResponse.body()?.items else null
+
+            if (!items.isNullOrEmpty()) {
+                val book = items.first().volumeInfo
+                // ... Mapeo de Google Books ...
+                return@withContext Pair(volume, authors)
+            }
+
+            // INTENTO 2: Open Library (Fallback)
+            val cleanIsbnOnly = query.removePrefix("isbn:").trim()
+            val olResponse = openLibraryApi.searchBooks(query = cleanIsbnOnly)
+            val olDocs = if (olResponse.isSuccessful) olResponse.body()?.docs else null
+            
+            if (!olDocs.isNullOrEmpty()) {
+                val doc = olDocs.first()
+                // Búsqueda de descripción ampliada (Work Key)
+                var remoteSynopsis = ""
+                doc.key?.let { key ->
+                    val workResponse = openLibraryApi.getWorkDetails(key.removePrefix("/"))
+                    if (workResponse.isSuccessful) remoteSynopsis = workResponse.body()?.getDescriptionText() ?: ""
+                }
+                // ... Mapeo de Open Library ...
+                return@withContext Pair(volume, authors)
+            }
+            null
+        } catch (e: Exception) { null }
     }
 
     override suspend fun createBackup(onUriReady: (Uri) -> Unit): Unit = withContext(ioDispatcher) {
@@ -163,7 +187,7 @@ class CameraOcrViewModel @Inject constructor(
 ## 3. Seguridad y Configuración (DI & Gradle)
 
 ### NetworkModule.kt
-Configuración del cliente HTTP con interceptores de seguridad para API Keys.
+Configuración del cliente HTTP con interceptores de seguridad para API Keys y lógica de reintentos para errores 503/504.
 
 ```kotlin
 @Module
@@ -174,13 +198,24 @@ object NetworkModule {
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor { chain ->
-                val apiKey = BuildConfig.GOOGLE_BOOKS_API_KEY
-                val url = chain.request().url.newBuilder().setQueryParameter("key", apiKey).build()
-                val request = chain.request().newBuilder().url(url)
-                    .header("X-Android-Package", "com.fasby.bibliomobil")
-                    .header("X-Android-Cert", "C90FDADC5CA9C56618328F6695584ABCBFFDEB29")
-                    .build()
-                chain.proceed(request)
+                val originalRequest = chain.request()
+                // Inyección selectiva de API Key según el host
+                val request = if (originalRequest.url.host.contains("googleapis")) {
+                    originalRequest.newBuilder()
+                        .url(originalRequest.url.newBuilder().addQueryParameter("key", BuildConfig.GOOGLE_BOOKS_API_KEY).build())
+                        .build()
+                } else originalRequest
+                
+                var response = chain.proceed(request)
+                // Lógica de reintentos automática (Exponential Backoff simulado)
+                var retries = 0
+                while (!response.isSuccessful && response.code in 503..504 && retries < 2) {
+                    retries++
+                    response.close()
+                    Thread.sleep(1500)
+                    response = chain.proceed(request)
+                }
+                response
             }.build()
     }
 }

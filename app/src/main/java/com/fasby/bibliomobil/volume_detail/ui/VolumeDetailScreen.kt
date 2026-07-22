@@ -31,7 +31,9 @@ fun VolumeDetailScreen(
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
     LaunchedEffect(isbn) {
-        viewModel.loadVolume(isbn)
+        if (isbn.isNotBlank()) {
+            viewModel.loadVolume(isbn)
+        }
     }
 
     Scaffold(
@@ -44,8 +46,15 @@ fun VolumeDetailScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { onEditClick(isbn) }) {
-                        Icon(Icons.Default.Edit, contentDescription = "Editar")
+                    // Solo permitimos editar si el volumen ya se ha cargado y tiene un ISBN válido
+                    val currentIsbn = uiState.volume?.volume?.isbn
+                    if (currentIsbn != null) {
+                        IconButton(onClick = { 
+                            android.util.Log.d("BiblioMobil", "Navegando a edición para ISBN: $currentIsbn")
+                            onEditClick(currentIsbn)
+                        }) {
+                            Icon(Icons.Default.Edit, contentDescription = "Editar")
+                        }
                     }
                 }
             )

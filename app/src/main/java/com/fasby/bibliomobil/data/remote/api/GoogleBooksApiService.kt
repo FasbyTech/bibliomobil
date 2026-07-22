@@ -1,6 +1,7 @@
 package com.fasby.bibliomobil.data.remote.api
 
 import com.fasby.bibliomobil.data.remote.dto.GoogleBooksResponse
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -14,5 +15,5 @@ interface GoogleBooksApiService {
     suspend fun searchBooks(
         @Query("q") query: String,
         @Query("maxResults") maxResults: Int = 1
-    ): GoogleBooksResponse
+    ): Response<GoogleBooksResponse>
 }

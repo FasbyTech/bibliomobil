@@ -27,6 +27,9 @@ interface VolumeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVolumeAuthorCrossRef(crossRef: VolumeAuthorCrossRef)
 
+    @Query("DELETE FROM volume_author_cross_ref WHERE isbn = :isbn")
+    suspend fun deleteVolumeAuthorCrossRefsByIsbn(isbn: String)
+
     /**
      * Una transacción atómica para insertar un volumen completo con sus autores.
      * Si falla la inserción de un autor, se revierte toda la operación.
@@ -37,6 +40,9 @@ interface VolumeDao {
         authors: List<AuthorEntity>
     ) {
         insertVolume(volume)
+        // Limpiamos asociaciones previas para evitar duplicados en ediciones
+        deleteVolumeAuthorCrossRefsByIsbn(volume.isbn)
+
         authors.forEach { author ->
             insertAuthor(author)
             insertVolumeAuthorCrossRef(

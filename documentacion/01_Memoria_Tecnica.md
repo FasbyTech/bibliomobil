@@ -11,11 +11,20 @@ El proyecto resuelve la fricción en la digitalización de colecciones físicas,
 - **Arquitectura**: Clean Architecture + MVVM
 - **UI**: Jetpack Compose + Material Design 3
 - **IA**: Google Gemini 1.5 Flash + ML Kit OCR
+- **APIs de Datos**: Google Books API (Primaria) + Open Library API (Fallback automático)
 - **Persistencia**: Room (SQLite FTS4/5)
 - **Inyección de Dependencias**: Hilt
 
-## 4. Arquitectura y Seguridad
-La app sigue los principios SOLID y Clean Architecture, separando las responsabilidades en capas de UI, Domain y Data. La seguridad se garantiza mediante la restricción de API Keys con firmas SHA-1 y el uso de FileProvider para la gestión de backups.
+## 4. Arquitectura y Robustez
+La app sigue los principios SOLID y Clean Architecture, separando las responsabilidades en capas de UI, Domain y Data. 
+
+### Estrategia de Datos Resiliente
+Para garantizar el funcionamiento incluso ante inestabilidades de servicios externos, se ha implementado un sistema de búsqueda secuencial:
+1. **Google Books API**: Fuente principal de metadatos.
+2. **Open Library API**: Fallback automático en caso de errores 503/504 o falta de resultados en Google.
+3. **Retry Interceptor**: Sistema de reintentos automáticos para peticiones de red fallidas.
+
+La seguridad se garantiza mediante la restricción de API Keys con firmas SHA-1 y el uso de FileProvider para la gestión de backups.
 
 ## 5. Pruebas y Validación
 Se han realizado pruebas unitarias de lógica de negocio y pruebas de integración sobre la base de datos Room. Los escenarios críticos como el escaneo de ISBN y el registro de préstamos han sido validados con éxito en dispositivos reales.

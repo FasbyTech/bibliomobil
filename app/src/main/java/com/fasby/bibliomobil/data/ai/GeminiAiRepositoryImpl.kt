@@ -29,26 +29,33 @@ class GeminiAiRepositoryImpl @Inject constructor() : AiRepository {
 
     override suspend fun generateSummary(title: String, synopsis: String): String? {
         return try {
+            android.util.Log.d("GeminiAI", "Generando resumen para: $title")
             val response = generativeModel.generateContent(
                 content {
                     text("Genera un resumen corto y atractivo en español para el siguiente libro/cómic: $title. Sinopsis actual: $synopsis")
                 }
             )
+            android.util.Log.d("GeminiAI", "Resumen generado con éxito")
             response.text
         } catch (e: Exception) {
+            android.util.Log.e("GeminiAI", "Error al generar resumen", e)
             null
         }
     }
 
     override suspend fun categorizeBook(title: String, synopsis: String): String? {
         return try {
+            android.util.Log.d("GeminiAI", "Categorizando: $title")
             val response = generativeModel.generateContent(
                 content {
                     text("Basándote en el título '$title' y la sinopsis '$synopsis', ¿cuál es el género principal? Responde solo con una palabra (ej: Shonen, Seinen, Terror, Ciencia Ficción).")
                 }
             )
-            response.text?.trim()
+            val category = response.text?.trim()
+            android.util.Log.d("GeminiAI", "Categoría generada: $category")
+            category
         } catch (e: Exception) {
+            android.util.Log.e("GeminiAI", "Error al categorizar", e)
             null
         }
     }
