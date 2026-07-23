@@ -1,61 +1,98 @@
-# BiblioMobil
+# 📚 BiblioMobil - Gestión Inteligente de Bibliotecas
 
-## Descripción General
-BiblioMobil es una aplicación Android nativa diseñada para la gestión inteligente de bibliotecas personales. La aplicación permite digitalizar colecciones físicas de forma eficiente mediante el escaneo de ISBN por OCR, enriqueciendo los datos automáticamente mediante Inteligencia Artificial (Gemini) y fuentes externas. Incluye un sistema completo de gestión de préstamos, valoraciones y reseñas personalizadas, manteniendo siempre un enfoque *offline-first* para garantizar la soberanía de la información del usuario.
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.4.0-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
+[![Android](https://img.shields.io/badge/Android-API%2024+-green.svg?style=flat&logo=android)](https://www.android.com)
+[![Compose](https://img.shields.io/badge/UI-Jetpack%20Compose-orange.svg?style=flat&logo=jetpackcompose)](https://developer.android.com/jetpack/compose)
+[![Hilt](https://img.shields.io/badge/DI-Hilt-yellow.svg?style=flat)](https://dagger.dev/hilt/)
+[![License](https://img.shields.io/badge/License-MIT-lightgrey.svg)](LICENSE)
 
-## Stack Tecnológico
-- **Lenguaje**: Kotlin 2.4.0
-- **Arquitectura**: Clean Architecture + MVVM (Model-View-ViewModel)
-- **UI**: Jetpack Compose con Material Design 3
-- **IA**: Google Gemini 1.5 Flash (Generación de sinopsis y categorización)
-- **OCR**: ML Kit (Reconocimiento de texto para ISBN)
-- **APIs de Datos**: Google Books API (Primaria) + Open Library API (Fallback automático)
-- **Persistencia**: Room (SQLite con soporte FTS5 para búsquedas rápidas)
-- **Inyección de Dependencias**: Hilt
-- **Red**: Retrofit + OkHttp (con sistema de reintentos resiliente)
+**BiblioMobil** es una aplicación Android nativa de vanguardia diseñada para la gestión inteligente de bibliotecas personales. Permite digitalizar colecciones físicas mediante OCR, enriquecer metadatos con IA y gestionar préstamos, todo bajo un enfoque *offline-first*.
 
-## Instalación y Ejecución
+---
+
+## 📖 Descripción General
+
+Digitaliza tu biblioteca en segundos. **BiblioMobil** elimina la carga manual de datos permitiendo el escaneo rápido de ISBN. La aplicación utiliza la potencia de **Google Gemini** para generar sinopsis y categorizar tus libros automáticamente, consultando múltiples fuentes internacionales para garantizar la exactitud de la información.
+
+---
+
+## 🛠️ Stack Tecnológico
+
+| Componente | Tecnología |
+| :--- | :--- |
+| **Lenguaje** | Kotlin 2.4.0 |
+| **Arquitectura** | Clean Architecture + MVVM |
+| **UI Framework** | Jetpack Compose (Material Design 3) |
+| **IA Generativa** | Google Gemini 1.5 Flash |
+| **Visión Artificial** | ML Kit (OCR para ISBN) |
+| **Persistencia** | Room (SQLite + FTS5 para búsquedas ultrarrápidas) |
+| **Red** | Retrofit + OkHttp (Estrategia de reintentos resiliente) |
+| **Inyección de Dependencias** | Hilt |
+
+---
+
+## 🚀 Instalación y Ejecución
 
 ### Requisitos Previos
-- Dispositivo Android con API 24 (Android 7.0) o superior.
-- Android Studio Ladybug o superior.
-- Claves de API para **Google Books** y **Google Gemini** (vía Google Cloud Console / AI Studio).
+*   Dispositivo Android con **API 24 (7.0)** o superior.
+*   **Android Studio Ladybug** o superior.
+*   API Keys de Google Cloud (Books API) y AI Studio (Gemini API).
 
 ### Pasos para la Instalación
-1. **Clonar el repositorio**:
-   ```bash
-   git clone https://github.com/FasbyTech/bibliomobil.git
-   ```
-2. **Configurar claves secretas**:
-   Cree un archivo `local.properties` en la raíz del proyecto y añada sus claves:
-   ```properties
-   google.books.api.key=TU_GOOGLE_BOOKS_KEY
-   gemini.api.key=TU_GEMINI_API_KEY
-   ```
-3. **Sincronizar y Ejecutar**:
-   Abra el proyecto en Android Studio, espere a que la sincronización de Gradle finalice y pulse en el botón "Run" para instalar en su dispositivo o emulador.
 
-## Estructuración del Proyecto
-El proyecto sigue los principios de **Clean Architecture**, organizado por capas y funcionalidades (feature-based):
+1.  **Clonar el repositorio**:
+    ```bash
+    git clone https://github.com/FasbyTech/bibliomobil.git
+    ```
 
-- `data/`: Implementaciones de repositorios, DAOs de Room, entidades de base de datos y servicios de red (Retrofit).
-- `domain/`: Lógica de negocio pura, definiciones de interfaces (repositorios) y casos de uso.
-- `di/`: Módulos de Hilt para la inyección de dependencias.
-- `navigation/`: Definición de rutas y grafo de navegación de la app.
-- `ui/`: Componentes comunes, temas y SplashScreen.
-- `features/` (Organizado por carpetas de funcionalidad):
-    - `catalog/`: Listado general y búsqueda FTS5.
-    - `camera/`: Escáner de ISBN con OCR y pre-visualización de cámara.
-    - `add_volume/`: Formulario de registro y lógica de autocompletado/IA.
-    - `volume_detail/`: Detalle del libro, gestión de préstamos y reseñas.
-    - `collections/`: Gestión de agrupaciones de volúmenes.
-    - `settings/`: Configuración de la app y sistema de backups.
+2.  **Configurar claves secretas**:
+    Crea un archivo `local.properties` en la raíz del proyecto:
+    ```properties
+    google.books.api.key=TU_GOOGLE_BOOKS_KEY
+    gemini.api.key=TU_GEMINI_API_KEY
+    ```
 
-## Funcionalidades Principales
-- **Escaneo ISBN Inteligente**: Reconocimiento de códigos de barras y texto mediante la cámara con confirmación rápida (1.5s).
-- **Autocompletado Resiliente**: Búsqueda secuencial de metadatos que prioriza Google Books y alterna a Open Library en caso de errores de red o falta de resultados.
-- **Enriquecimiento por IA**: Generación de resúmenes y categorización automática mediante modelos generativos de Google Gemini.
-- **Búsqueda por Voz**: Localización de libros en el catálogo mediante dictado natural.
-- **Gestión de Préstamos**: Registro y trazabilidad de ejemplares prestados a contactos.
-- **Offline-First**: Funcionamiento completo sin conexión tras la descarga inicial de metadatos.
-- **Copias de Seguridad**: Sistema de exportación y restauración de la base de datos local para evitar la pérdida de información.
+3.  **Sincronizar y Ejecutar**:
+    Abre el proyecto en Android Studio, sincroniza Gradle y pulsa **Run**.
+
+---
+
+## 🏗️ Estructura del Proyecto
+
+El código está organizado siguiendo los principios de **Clean Architecture**, dividiéndose por capas y funcionalidades:
+
+```text
+app/src/main/java/com/fasby/bibliomobil/
+├── data/           # Implementaciones de Repositorios, DAOs y API Services
+├── domain/         # Modelos de negocio, Interfaces y Casos de Uso
+├── di/             # Módulos de Hilt (Inyección de dependencias)
+├── navigation/     # Grafo de navegación y rutas de Compose
+├── ui/             # Componentes comunes, Temas y SplashScreen
+└── features/       # Módulos por funcionalidad
+    ├── catalog/    # Listado principal y búsqueda FTS5
+    ├── camera/     # Escáner OCR de alta velocidad (1.5s)
+    ├── add_volume/ # Lógica de registro y autocompletado con IA
+    ├── volume_detail/# Gestión de préstamos, valoraciones y reseñas
+    └── collections/# Agrupación y gestión de colecciones
+```
+
+---
+
+## ✨ Funcionalidades Estrella
+
+*   **⚡ Escaneo Ultra-Rápido**: Reconocimiento de ISBN por cámara con confirmación visual en solo **1.5 segundos**.
+*   **🛡️ Autocompletado Resiliente**: Búsqueda secuencial (Google Books ➡️ Open Library) para fallos de red.
+*   **🧠 Enriquecimiento por IA**: Generación de sinopsis atractivas y categorización automática mediante **Gemini**.
+*   **🎙️ Búsqueda por Voz**: Localiza cualquier libro en tu catálogo simplemente dictando su nombre.
+*   **🤝 Gestión de Préstamos**: Controla a quién has prestado tus libros con historial detallado.
+*   **🔌 Offline-First**: Acceso total a tu biblioteca sin necesidad de internet.
+*   **💾 Backups**: Sistema de exportación y restauración para la soberanía de tus datos.
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+
+---
+*Desarrollado por [FasbyTech](https://github.com/FasbyTech)*
