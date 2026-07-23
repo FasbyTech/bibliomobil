@@ -178,7 +178,7 @@ class CatalogViewModel @Inject constructor(
 ```
 
 ### CameraOcrViewModel.kt
-Lógica del escáner con el temporizador de confirmación de 3 segundos.
+Lógica del escáner con el temporizador de confirmación de 1,5 segundos.
 
 ```kotlin
 @HiltViewModel

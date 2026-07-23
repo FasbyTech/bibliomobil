@@ -96,7 +96,7 @@ class CameraOcrViewModel @Inject constructor(
         confirmationJob = viewModelScope.launch {
             _uiState.update { it.copy(confirmingIsbn = isbn, confirmationProgress = 0f) }
             
-            val totalTimeMs = 3000L
+            val totalTimeMs = 1500L
             val stepMs = 100L
             val totalSteps = (totalTimeMs / stepMs).toInt()
             
@@ -105,7 +105,7 @@ class CameraOcrViewModel @Inject constructor(
                 _uiState.update { it.copy(confirmationProgress = step.toFloat() / totalSteps) }
             }
             
-            // Confirmado tras 3 segundos
+            // Confirmado tras 1.5 segundos
             _uiState.update { 
                 it.copy(
                     detectedIsbn = isbn, 
