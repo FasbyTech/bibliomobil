@@ -1,62 +1,61 @@
-# BiblioMobil - Gestión Inteligente de Bibliotecas Personales
+# BiblioMobil
 
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.4.0-blue.svg)](https://kotlinlang.org)
-[![Platform](https://img.shields.io/badge/Platform-Android-green.svg)](https://developer.android.com)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+## Descripción General
+BiblioMobil es una aplicación Android nativa diseñada para la gestión inteligente de bibliotecas personales. La aplicación permite digitalizar colecciones físicas de forma eficiente mediante el escaneo de ISBN por OCR, enriqueciendo los datos automáticamente mediante Inteligencia Artificial (Gemini) y fuentes externas. Incluye un sistema completo de gestión de préstamos, valoraciones y reseñas personalizadas, manteniendo siempre un enfoque *offline-first* para garantizar la soberanía de la información del usuario.
 
-**BiblioMobil** es una aplicación Android de vanguardia diseñada para la catalogación y gestión eficiente de bibliotecas personales de libros y cómics. Desarrollada por **Guillermo J. Conesa** como proyecto final (TFM) para el **Máster en Desarrollo con IA** de **Big School**.
-
----
-
-## 🌟 Funcionalidades Principales
-
-- **🔍 Escáner OCR Inteligente**: Digitaliza libros en segundos escaneando su código ISBN con confirmación visual de estabilidad (delay de 3s para precisión).
-- **🎙️ Búsqueda por Voz**: Acceso total al catálogo mediante comandos de voz naturales.
-- **🤖 IA Generativa (Gemini 1.5 Flash)**: Generación automática de sinopsis y enriquecimiento de metadatos literarios.
-- **📝 Gestión de Préstamos**: Trazabilidad completa (Relaciones 1:N) de quién tiene tus libros y cuándo deben volver.
-- **⭐ Valoración y Reseñas**: Sistema de estrellas interactivo y espacio para críticas literarias personales.
-- **📁 Soberanía de Datos**: Backup local/cloud (Google Drive), restauración atómica y exportación a CSV mediante SAF.
-- **🖼️ Editor de Portadas**: Herramienta de recorte (crop) integrada para un acabado visual impecable.
-- **🌓 Diseño Profesional**: Interfaz moderna (Material 3) con soporte para Modo Oscuro y Color Dinámico.
-
----
-
-## 🛠️ Stack Tecnológico (MAD)
-
-- **Lenguaje**: Kotlin 2.4.0 (Coroutines & Flow)
-- **Arquitectura**: Clean Architecture + MVVM + Inyección de Dependencias (Hilt)
+## Stack Tecnológico
+- **Lenguaje**: Kotlin 2.4.0
+- **Arquitectura**: Clean Architecture + MVVM (Model-View-ViewModel)
 - **UI**: Jetpack Compose con Material Design 3
-- **Persistencia**: Room Database con soporte FTS4/5 y modo WAL
-- **IA**: Google Gemini AI & ML Kit (On-device OCR)
-- **Networking**: Retrofit 2 + OkHttp 5 (Interceptores de Seguridad SHA-1)
-- **Hardware**: CameraX & Speech Recognizer API
+- **IA**: Google Gemini 1.5 Flash (Generación de sinopsis y categorización)
+- **OCR**: ML Kit (Reconocimiento de texto para ISBN)
+- **APIs de Datos**: Google Books API (Primaria) + Open Library API (Fallback automático)
+- **Persistencia**: Room (SQLite con soporte FTS5 para búsquedas rápidas)
+- **Inyección de Dependencias**: Hilt
+- **Red**: Retrofit + OkHttp (con sistema de reintentos resiliente)
 
----
+## Instalación y Ejecución
 
-## 📂 Documentación del Proyecto
+### Requisitos Previos
+- Dispositivo Android con API 24 (Android 7.0) o superior.
+- Android Studio Ladybug o superior.
+- Claves de API para **Google Books** y **Google Gemini** (vía Google Cloud Console / AI Studio).
 
-El proyecto incluye un dossier académico consolidado en la carpeta [`/documentacion`](./documentacion):
-
-1.  **[01_Memoria_Tecnica.md](./documentacion/01_Memoria_Tecnica.md)**: Resumen, Stack, Arquitectura y Pruebas.
-2.  **[02_Manual_de_Usuario.md](./documentacion/02_Manual_de_Usuario.md)**: Guía paso a paso para el usuario final.
-3.  **[03_Despliegue_e_Instalacion.md](./documentacion/03_Despliegue_e_Instalacion.md)**: Instrucciones de compilación y API Keys.
-4.  **[04_Anexo_Codigo_Fuente.md](./documentacion/04_Anexo_Codigo_Fuente.md)**: Recopilación de las clases core comentadas.
-5.  **[05_Politica_de_Privacidad.md](./documentacion/05_Politica_de_Privacidad.md)**: Transparencia en el uso de datos.
-
----
-
-## 🚀 Instalación y Despliegue
-
-1. Clona el repositorio: `git clone https://github.com/FasbyTech/bibliomobil.git`
-2. Añade tus API Keys en `local.properties`:
-   ```properties
-   google.books.api.key=TU_KEY
-   gemini.api.key=TU_KEY
+### Pasos para la Instalación
+1. **Clonar el repositorio**:
+   ```bash
+   git clone https://github.com/FasbyTech/bibliomobil.git
    ```
-3. Registra tu firma **SHA-1** en Google Cloud Console para habilitar las restricciones de seguridad.
-4. Sincroniza Gradle y ejecuta en un dispositivo (API 24+).
+2. **Configurar claves secretas**:
+   Cree un archivo `local.properties` en la raíz del proyecto y añada sus claves:
+   ```properties
+   google.books.api.key=TU_GOOGLE_BOOKS_KEY
+   gemini.api.key=TU_GEMINI_API_KEY
+   ```
+3. **Sincronizar y Ejecutar**:
+   Abra el proyecto en Android Studio, espere a que la sincronización de Gradle finalice y pulse en el botón "Run" para instalar en su dispositivo o emulador.
 
----
+## Estructuración del Proyecto
+El proyecto sigue los principios de **Clean Architecture**, organizado por capas y funcionalidades (feature-based):
 
-**Desarrollado por Guillermo J. Conesa**  
-*TFM - Máster en Desarrollo con IA (Big School)*
+- `data/`: Implementaciones de repositorios, DAOs de Room, entidades de base de datos y servicios de red (Retrofit).
+- `domain/`: Lógica de negocio pura, definiciones de interfaces (repositorios) y casos de uso.
+- `di/`: Módulos de Hilt para la inyección de dependencias.
+- `navigation/`: Definición de rutas y grafo de navegación de la app.
+- `ui/`: Componentes comunes, temas y SplashScreen.
+- `features/` (Organizado por carpetas de funcionalidad):
+    - `catalog/`: Listado general y búsqueda FTS5.
+    - `camera/`: Escáner de ISBN con OCR y pre-visualización de cámara.
+    - `add_volume/`: Formulario de registro y lógica de autocompletado/IA.
+    - `volume_detail/`: Detalle del libro, gestión de préstamos y reseñas.
+    - `collections/`: Gestión de agrupaciones de volúmenes.
+    - `settings/`: Configuración de la app y sistema de backups.
+
+## Funcionalidades Principales
+- **Escaneo ISBN Inteligente**: Reconocimiento de códigos de barras y texto mediante la cámara con confirmación rápida (1.5s).
+- **Autocompletado Resiliente**: Búsqueda secuencial de metadatos que prioriza Google Books y alterna a Open Library en caso de errores de red o falta de resultados.
+- **Enriquecimiento por IA**: Generación de resúmenes y categorización automática mediante modelos generativos de Google Gemini.
+- **Búsqueda por Voz**: Localización de libros en el catálogo mediante dictado natural.
+- **Gestión de Préstamos**: Registro y trazabilidad de ejemplares prestados a contactos.
+- **Offline-First**: Funcionamiento completo sin conexión tras la descarga inicial de metadatos.
+- **Copias de Seguridad**: Sistema de exportación y restauración de la base de datos local para evitar la pérdida de información.
