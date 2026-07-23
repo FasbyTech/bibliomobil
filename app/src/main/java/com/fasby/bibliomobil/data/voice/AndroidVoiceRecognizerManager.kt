@@ -46,6 +46,10 @@ class AndroidVoiceRecognizerManager @Inject constructor(
         speechRecognizer.stopListening()
     }
 
+    override fun reset() {
+        _state.value = VoiceRecognizerState.Idle
+    }
+
     override fun destroy() {
         speechRecognizer.destroy()
     }

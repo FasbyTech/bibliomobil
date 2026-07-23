@@ -78,9 +78,17 @@ class CatalogViewModel @Inject constructor(
      */
     fun onSearchQueryChanged(newQuery: String) {
         // Si el motor de voz estaba en modo éxito o error, lo reseteamos al escribir
-        if (voiceRecognizerManager.state.value !is VoiceRecognizerState.Idle) {
+        // para que no se quede el mensaje antiguo pegado en la UI.
+        val currentState = voiceRecognizerManager.state.value
+        if (currentState is VoiceRecognizerState.Success || currentState is VoiceRecognizerState.Error) {
+            voiceRecognizerManager.reset()
+        }
+        
+        // Si estaba escuchando activamente y el usuario empieza a escribir, detenemos el dictado.
+        if (currentState is VoiceRecognizerState.Listening) {
             voiceRecognizerManager.stopListening()
         }
+
         _collectionId.value = null // Reset filter when searching
         _searchQuery.value = newQuery
     }

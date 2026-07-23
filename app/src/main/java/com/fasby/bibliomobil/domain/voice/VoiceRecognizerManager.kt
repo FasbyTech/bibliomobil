@@ -13,5 +13,6 @@ interface VoiceRecognizerManager {
     val state: StateFlow<VoiceRecognizerState>
     fun startListening()
     fun stopListening()
+    fun reset()
     fun destroy()
 }

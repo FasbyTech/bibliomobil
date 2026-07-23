@@ -13,7 +13,12 @@ Representa el modelo persistente de un libro con campos extendidos para valoraci
 @Entity(tableName = "volumes")
 data class VolumeEntity(
     @PrimaryKey val isbn: String,
+    val collectionId: String? = null,
     val title: String,
+    val number: Int = 0,
+    val publishedYear: Int = 0,
+    val synopsis: String = "",
+    val coverPath: String = "",
     val rating: Int, // 1-5 estrellas
     val personalReview: String = "",
     val isRead: Boolean = false,
@@ -41,7 +46,7 @@ interface OpenLibraryApiService {
 ```
 
 ### VolumeRepositoryImpl.kt
-Gestiona la lógica de negocio de los datos, integrando Room, Retrofit y el sistema de archivos para Backups. Incluye una estrategia secuencial de búsqueda (Google Books -> Open Library).
+Gestiona la lógica de búsqueda secuencial (Google Books -> Open Library) con soporte de sinopsis ampliada mediante Work Keys.
 
 ```kotlin
 @Singleton
@@ -55,94 +60,14 @@ class VolumeRepositoryImpl @Inject constructor(
 ) : VolumeRepository {
 
     override suspend fun searchRemoteBook(query: String): Pair<VolumeEntity, List<AuthorEntity>>? = withContext(ioDispatcher) {
-        try {
-            // INTENTO 1: Google Books
-            val googleResponse = googleBooksApi.searchBooks(query)
-            var items = if (googleResponse.isSuccessful) googleResponse.body()?.items else null
-
-            if (!items.isNullOrEmpty()) {
-                val book = items.first().volumeInfo
-                // ... Mapeo de Google Books ...
-                return@withContext Pair(volume, authors)
-            }
-
-            // INTENTO 2: Open Library (Fallback)
-            val cleanIsbnOnly = query.removePrefix("isbn:").trim()
-            val olResponse = openLibraryApi.searchBooks(query = cleanIsbnOnly)
-            val olDocs = if (olResponse.isSuccessful) olResponse.body()?.docs else null
-            
-            if (!olDocs.isNullOrEmpty()) {
-                val doc = olDocs.first()
-                // Búsqueda de descripción ampliada (Work Key)
-                var remoteSynopsis = ""
-                doc.key?.let { key ->
-                    val workResponse = openLibraryApi.getWorkDetails(key.removePrefix("/"))
-                    if (workResponse.isSuccessful) remoteSynopsis = workResponse.body()?.getDescriptionText() ?: ""
-                }
-                // ... Mapeo de Open Library ...
-                return@withContext Pair(volume, authors)
-            }
-            null
-        } catch (e: Exception) { null }
+        // Lógica de búsqueda con fallback automático de Google a Open Library
+        // ... (Ver implementación completa en el repositorio)
     }
 
-    override suspend fun createBackup(onUriReady: (Uri) -> Unit): Unit = withContext(ioDispatcher) {
-        try {
-            database.openHelper.writableDatabase.query("PRAGMA wal_checkpoint(FULL)").moveToFirst()
-            val dbFile = context.getDatabasePath("biblio_mobil_db")
-            if (dbFile.exists()) {
-                val backupFile = File(context.cacheDir, "backup_bibliomobil_${System.currentTimeMillis()}.db")
-                dbFile.copyTo(backupFile, overwrite = true)
-                val contentUri = FileProvider.getUriForFile(context, "com.fasby.bibliomobil.fileprovider", backupFile)
-                onUriReady(contentUri)
-            }
-        } catch (e: Exception) {
-            android.util.Log.e("BiblioMobil", "Error creando backup", e)
-        }
+    override suspend fun createBackup(onUriReady: (Uri) -> Unit) {
+        // Implementación física de backup SQLite con WAL checkpoint
     }
 }
-```
-
-### VolumeDao.kt
-Definición de las consultas SQL, transacciones atómicas y gestión de la tabla de préstamos.
-
-```kotlin
-@Dao
-interface VolumeDao {
-    @Transaction
-    @Query("SELECT * FROM volumes ORDER BY createdAt DESC")
-    fun getAllDetailedVolumes(): Flow<List<DetailedVolume>>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertLoan(loan: LoanEntity)
-
-    @Query("SELECT * FROM loans WHERE isbn = :isbn ORDER BY loanDate DESC")
-    fun getLoansForVolume(isbn: String): Flow<List<LoanEntity>>
-}
-```
-
-### LoanEntity.kt
-Entidad que representa un préstamo vinculado a un volumen mediante una relación 1:N con borrado en cascada.
-
-```kotlin
-@Entity(
-    tableName = "loans",
-    foreignKeys = [
-        ForeignKey(
-            entity = VolumeEntity::class,
-            parentColumns = ["isbn"],
-            childColumns = ["isbn"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
-)
-data class LoanEntity(
-    @PrimaryKey val id: String = UUID.randomUUID().toString(),
-    val isbn: String,
-    val lentTo: String,
-    val loanDate: Long = System.currentTimeMillis(),
-    val returnDate: Long? = null
-)
 ```
 
 ---
@@ -150,7 +75,7 @@ data class LoanEntity(
 ## 2. Capa de Presentación (UI Layer)
 
 ### CatalogViewModel.kt
-Gestiona el estado del catálogo y la sincronización entre búsqueda manual y por voz.
+Gestiona el estado del catálogo y la sincronización entre búsqueda manual y por voz, incluyendo el reseteo de estados para evitar errores al borrar.
 
 ```kotlin
 @HiltViewModel
@@ -163,88 +88,80 @@ class CatalogViewModel @Inject constructor(
     val uiState: StateFlow<CatalogUiState> = combine(
         _searchQuery, _collectionId, voiceRecognizerManager.state
     ) { query, collectionId, voiceState ->
+        // Combinación reactiva de flujos
         Triple(query, collectionId, voiceState)
     }.flatMapLatest { (currentQuery, collectionId, voiceState) ->
-        val flow = if (collectionId != null) {
-            repository.getVolumesByCollection(collectionId)
-        } else {
-            repository.searchVolumes(currentQuery)
-        }
-        flow.map { volumesList ->
-            CatalogUiState(currentQuery, volumesList, voiceState, false)
-        }
+        val flow = if (collectionId != null) repository.getVolumesByCollection(collectionId)
+                   else repository.searchVolumes(currentQuery)
+        
+        flow.map { list -> CatalogUiState(currentQuery, list, voiceState) }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CatalogUiState(isLoading = true))
+
+    fun onSearchQueryChanged(newQuery: String) {
+        // Fix: Reseteo de estados de voz al borrar o escribir manualmente
+        val currentState = voiceRecognizerManager.state.value
+        if (currentState is VoiceRecognizerState.Success || currentState is VoiceRecognizerState.Error) {
+            voiceRecognizerManager.reset()
+        }
+        _searchQuery.value = newQuery
+    }
 }
 ```
 
 ### CameraOcrViewModel.kt
-Lógica del escáner con el temporizador de confirmación de 1,5 segundos.
+Lógica del escáner con el temporizador de confirmación optimizado a 1,5 segundos.
 
 ```kotlin
-@HiltViewModel
-class CameraOcrViewModel @Inject constructor(
-    private val searchVolumesUseCase: SearchVolumesUseCase
-) : ViewModel() {
-
-    private fun startIsbnConfirmation(isbn: String) {
-        confirmationJob?.cancel()
-        confirmationJob = viewModelScope.launch {
-            _uiState.update { it.copy(confirmingIsbn = isbn, confirmationProgress = 0f) }
-            val totalSteps = 30
-            for (step in 1..totalSteps) {
-                delay(100)
-                _uiState.update { it.copy(confirmationProgress = step.toFloat() / totalSteps) }
-            }
-            _uiState.update { it.copy(detectedIsbn = isbn, lastNavigatedIsbn = isbn) }
+private fun startIsbnConfirmation(isbn: String) {
+    confirmationJob?.cancel()
+    confirmationJob = viewModelScope.launch {
+        _uiState.update { it.copy(confirmingIsbn = isbn, confirmationProgress = 0f) }
+        val totalTimeMs = 1500L
+        val stepMs = 100L
+        val totalSteps = (totalTimeMs / stepMs).toInt()
+        for (step in 1..totalSteps) {
+            delay(stepMs)
+            _uiState.update { it.copy(confirmationProgress = step.toFloat() / totalSteps) }
         }
+        _uiState.update { it.copy(detectedIsbn = isbn, lastNavigatedIsbn = isbn) }
     }
 }
 ```
 
 ---
 
-## 3. Seguridad y Configuración (DI & Gradle)
+## 3. Capa de Red e Infraestructura
 
 ### NetworkModule.kt
-Configuración del cliente HTTP con interceptores de seguridad para API Keys y lógica de reintentos para errores 503/504.
+Configuración de clientes Retrofit con interceptor de reintentos para errores de servidor (503/504).
 
 ```kotlin
-@Module
-@InstallIn(SingletonComponent::class)
-object NetworkModule {
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                val originalRequest = chain.request()
-                // Inyección selectiva de API Key según el host
-                val request = if (originalRequest.url.host.contains("googleapis")) {
-                    originalRequest.newBuilder()
-                        .url(originalRequest.url.newBuilder().addQueryParameter("key", BuildConfig.GOOGLE_BOOKS_API_KEY).build())
-                        .build()
-                } else originalRequest
-                
-                var response = chain.proceed(request)
-                // Lógica de reintentos automática (Exponential Backoff simulado)
-                var retries = 0
-                while (!response.isSuccessful && response.code in 503..504 && retries < 2) {
-                    retries++
-                    response.close()
-                    Thread.sleep(1500)
-                    response = chain.proceed(request)
-                }
-                response
-            }.build()
-    }
+@Provides
+@Singleton
+fun provideOkHttpClient(): OkHttpClient {
+    return OkHttpClient.Builder()
+        .addInterceptor { chain ->
+            val request = chain.request()
+            var response = chain.proceed(request)
+            var retries = 0
+            // Reintentos automáticos para mejorar la resiliencia
+            while (!response.isSuccessful && response.code in 503..504 && retries < 2) {
+                retries++
+                response.close()
+                Thread.sleep(1500)
+                response = chain.proceed(request)
+            }
+            response
+        }.build()
 }
+```
 
 ---
 
 ## 4. Capa de Inteligencia Artificial (AI Layer)
 
 ### GeminiAiRepositoryImpl.kt
-Implementación del cliente de Gemini 1.5 Flash para la generación de resúmenes y categorización automática mediante modelos generativos.
+Implementación del cliente de Gemini 1.5 Flash para la generación de resúmenes.
 
 ```kotlin
 @Singleton
@@ -255,11 +172,8 @@ class GeminiAiRepositoryImpl @Inject constructor() : AiRepository {
     )
 
     override suspend fun generateSummary(title: String, synopsis: String): String? {
-        return try {
-            val response = generativeModel.generateContent("Genera un resumen corto en español para: $title. Sinopsis: $synopsis")
-            response.text
-        } catch (e: Exception) { null }
+        val response = generativeModel.generateContent("Resume en español: $title")
+        return response.text
     }
 }
-```
 ```
