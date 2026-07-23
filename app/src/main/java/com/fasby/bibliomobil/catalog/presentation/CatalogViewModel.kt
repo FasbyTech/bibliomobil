@@ -71,6 +71,17 @@ class CatalogViewModel @Inject constructor(
                 }
             }
         }
+
+        // TFM FIX: Si se elimina una colección mientras estamos filtrando por ella,
+        // reseteamos el filtro a null para que los libros vuelvan al catálogo general.
+        viewModelScope.launch {
+            repository.getAllCollections().collect { collections ->
+                val currentFilter = _collectionId.value
+                if (currentFilter != null && collections.none { it.id == currentFilter }) {
+                    _collectionId.value = null
+                }
+            }
+        }
     }
 
     /**

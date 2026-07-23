@@ -97,13 +97,20 @@ class CatalogViewModel @Inject constructor(
         flow.map { list -> CatalogUiState(currentQuery, list, voiceState) }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CatalogUiState(isLoading = true))
 
-    fun onSearchQueryChanged(newQuery: String) {
-        // Fix: Reseteo de estados de voz al borrar o escribir manualmente
-        val currentState = voiceRecognizerManager.state.value
-        if (currentState is VoiceRecognizerState.Success || currentState is VoiceRecognizerState.Error) {
-            voiceRecognizerManager.reset()
+    init {
+        // ... Sincronización búsqueda por voz ...
+
+        // TFM FIX: Estrategia reactiva para evitar volúmenes huérfanos en la UI.
+        // Si se elimina una colección, el ViewModel detecta la ausencia del ID 
+        // en la tabla de colecciones y limpia el filtro automáticamente.
+        viewModelScope.launch {
+            repository.getAllCollections().collect { collections ->
+                val currentFilter = _collectionId.value
+                if (currentFilter != null && collections.none { it.id == currentFilter }) {
+                    _collectionId.value = null
+                }
+            }
         }
-        _searchQuery.value = newQuery
     }
 }
 ```
